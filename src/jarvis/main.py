@@ -6,22 +6,20 @@ Author: Bojja Srijan
 Version: 0.0.1
 """
 
-from datetime import datetime
-
+from jarvis.kernel import Kernel
+from jarvis.bootstrap import initialize_filesystem
 
 def main():
+    initialize_filesystem()
     print("=" * 50)
     print("JARVIS OS")
-    print("Version : 0.0.1")
-    print(f"Started : {datetime.now()}")
     print("=" * 50)
+
+    kernel = Kernel()
+    kernel.start()
+
     print()
-    print("System Status")
-    print("[✓] Python Runtime")
-    print("[✓] Virtual Environment")
-    print("[✓] Project Initialized")
-    print()
-    print("JARVIS is waiting for instructions...")
+    print("JARVIS is ready.")
 
 
 if __name__ == "__main__":

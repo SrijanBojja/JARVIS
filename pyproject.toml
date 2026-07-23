@@ -1,0 +1,15 @@
+[project]
+name = "jarvis-os"
+version = "0.0.1"
+description = "Personal AI Operating System"
+readme = "README.md"
+requires-python = ">=3.13"
+authors = [
+    { name = "Bojja Srijan" }
+]
+
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"

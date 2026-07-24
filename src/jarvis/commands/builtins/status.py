@@ -27,7 +27,10 @@ class StatusCommand(Command):
     def description(self) -> str:
         return "Display the current JARVIS status."
 
-    def execute(self) -> None:
+    def execute(
+        self,
+        args: list[str],
+    ) -> None:
         """
         Execute the status command.
         """

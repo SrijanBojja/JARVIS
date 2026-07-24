@@ -27,7 +27,10 @@ class Command(ABC):
         """
 
     @abstractmethod
-    def execute(self) -> None:
+    def execute(
+        self,
+        args: list[str],
+    ) -> None:
         """
         Execute the command.
         """

@@ -8,6 +8,7 @@ from jarvis.logger import initialize_logging
 from jarvis.kernel import Kernel
 from jarvis.commands.module import CommandModule
 from jarvis.shell import Shell
+from jarvis.utils import CommandHistory
 
 
 class ApplicationBootstrap:
@@ -35,11 +36,18 @@ class ApplicationBootstrap:
 
         initialize_filesystem()
         initialize_logging()
+        history = CommandHistory()
 
         kernel = Kernel()
 
-        command_module = CommandModule(kernel)
-        shell = Shell(command_module)
+        command_module = CommandModule(
+            kernel,
+            history
+        )
+        shell = Shell(
+            command_module,
+            history
+        )
 
         self._container.register(
             CommandModule,
@@ -49,6 +57,11 @@ class ApplicationBootstrap:
         self._container.register(
             Kernel,
             kernel,
+        )
+
+        self._container.register(
+            CommandHistory,
+            history,
         )
 
         self._container.register(

@@ -26,7 +26,10 @@ class HelpCommand(Command):
     def description(self) -> str:
         return "Display available commands."
 
-    def execute(self) -> None:
+    def execute(
+        self,
+        args: list[str],
+    ) -> None:
         """
         Execute the help command.
         """

@@ -1,5 +1,5 @@
 """
-Exit command for the JARVIS Operating System.
+Echo command for the JARVIS Operating System.
 """
 
 from __future__ import annotations
@@ -7,27 +7,25 @@ from __future__ import annotations
 from jarvis.commands import Command
 
 
-class ExitCommand(Command):
+class EchoCommand(Command):
     """
-    Exit the JARVIS shell.
+    Echo the supplied text.
     """
 
     @property
     def name(self) -> str:
-        return "exit"
+        return "echo"
 
     @property
     def description(self) -> str:
-        return "Exit the JARVIS shell."
+        return "Print the supplied text."
 
     def execute(
         self,
         args: list[str],
     ) -> None:
         """
-        Execute the exit command.
+        Execute the echo command.
         """
 
-        print("Goodbye.")
-
-        raise SystemExit
+        print(" ".join(args))

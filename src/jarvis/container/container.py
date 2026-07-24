@@ -36,6 +36,22 @@ class ServiceContainer:
 
         self._services[service_type] = instance
 
+    def register_factory(
+        self,
+        service_type: type[Any],
+        factory,
+    ) -> None:
+        """
+        Register a factory for creating a singleton service lazily.
+        """
+
+        if service_type in self._services:
+            raise ServiceAlreadyRegisteredError(
+                f"Service '{service_type.__name__}' is already registered."
+            )
+
+        self._services[service_type] = factory
+
     def resolve(
         self,
         service_type: type[Any],
@@ -49,7 +65,13 @@ class ServiceContainer:
                 f"Service '{service_type.__name__}' is not registered."
             )
 
-        return self._services[service_type]
+        service = self._services[service_type]
+
+        if callable(service):
+            service = service()
+            self._services[service_type] = service
+
+        return service
 
     def has(
         self,

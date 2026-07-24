@@ -6,6 +6,9 @@ from jarvis.bootstrap import initialize_filesystem
 from jarvis.container import ServiceContainer
 from jarvis.logger import initialize_logging
 from jarvis.kernel import Kernel
+from jarvis.commands.module import CommandModule
+from jarvis.shell import Shell
+
 
 class ApplicationBootstrap:
     """
@@ -23,7 +26,6 @@ class ApplicationBootstrap:
         """
         Return the application's service container.
         """
-
         return self._container
 
     def initialize(self) -> None:
@@ -32,14 +34,31 @@ class ApplicationBootstrap:
         """
 
         initialize_filesystem()
-
         initialize_logging()
+
+        kernel = Kernel()
+
+        command_module = CommandModule(kernel)
+        shell = Shell(command_module)
+
+        self._container.register(
+            CommandModule,
+            command_module,
+        )
 
         self._container.register(
             Kernel,
-            Kernel(),
+            kernel,
         )
 
-        kernel = self._container.resolve(Kernel)
+        self._container.register(
+            Shell,
+            shell,
+        )
 
-        kernel.start()
+        kernel.modules.register(
+            command_module,
+        )
+
+        self._container.resolve(Kernel).start()
+        self._container.resolve(Shell).run()

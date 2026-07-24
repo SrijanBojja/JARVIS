@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import math
 
+from jarvis.responses import Response
 from jarvis.skills import Skill
 
 
@@ -25,11 +26,12 @@ class CalculatorSkill(Skill):
     def execute(
         self,
         args: list[str],
-    ) -> None:
+    ) -> Response:
 
         if not args:
-            print("Usage: calc <expression>")
-            return
+            return Response(
+                "Usage: calc <expression>",
+            )
 
         expression = " ".join(args)
 
@@ -42,7 +44,9 @@ class CalculatorSkill(Skill):
                 },
             )
 
-            print(result)
+            return Response(str(result))
 
         except Exception as error:
-            print(f"Calculation error: {error}")
+            return Response(
+                f"Calculation error: {error}",
+            )

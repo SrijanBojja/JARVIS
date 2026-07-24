@@ -7,7 +7,7 @@ from __future__ import annotations
 from jarvis.modules import Module
 from jarvis.skills.builtins import CalculatorSkill
 from jarvis.skills.manager import SkillManager
-
+from jarvis.responses import Response
 
 class SkillModule(Module):
     """
@@ -25,16 +25,14 @@ class SkillModule(Module):
         self,
         name: str,
         args: list[str],
-    ) -> bool:
+    ) -> Response | None:
 
         skill = self.manager.resolve(name)
 
         if skill is None:
-            return False
+            return None
 
-        skill.execute(args)
-
-        return True
+        return skill.execute(args)
 
     def initialize(self) -> None:
         self.manager.register(

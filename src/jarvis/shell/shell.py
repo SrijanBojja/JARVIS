@@ -64,7 +64,7 @@ class Shell:
                 if response is not None:
                     print(response.text)
 
-                elif command != "calc":
+                else:
                     print(f"Unknown command: {command}")
 
             except SystemExit:

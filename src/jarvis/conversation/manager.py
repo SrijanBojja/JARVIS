@@ -42,10 +42,12 @@ class ConversationManager:
             )
 
         except CommandNotFoundError:
-            if self._skill_module.execute(
+            response = self._skill_module.execute(
                 command,
                 args,
-            ):
-                return None
+            )
 
-            return None
+            if response is not None:
+                return response
+
+        return None

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from jarvis.commands import Command
 from jarvis.config import settings
+from jarvis.responses import Response
 
 
 class VersionCommand(Command):
@@ -24,11 +25,13 @@ class VersionCommand(Command):
     def execute(
         self,
         args: list[str],
-    ) -> None:
+    ) -> Response:
         """
         Execute the version command.
         """
 
-        print()
-        print("JARVIS OS")
-        print(f"Version: {settings.version}")
+        return Response(
+            "\n"
+            "JARVIS OS\n"
+            f"Version: {settings.version}"
+        )

@@ -5,6 +5,7 @@ Exit command for the JARVIS Operating System.
 from __future__ import annotations
 
 from jarvis.commands import Command
+from jarvis.responses import Response
 
 
 class ExitCommand(Command):
@@ -23,11 +24,9 @@ class ExitCommand(Command):
     def execute(
         self,
         args: list[str],
-    ) -> None:
+    ) -> Response:
         """
         Execute the exit command.
         """
-
-        print("Goodbye.")
 
         raise SystemExit

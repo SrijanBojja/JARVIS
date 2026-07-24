@@ -5,6 +5,7 @@ Help command for the JARVIS Operating System.
 from __future__ import annotations
 
 from jarvis.commands import Command
+from jarvis.responses import Response
 
 
 class HelpCommand(Command):
@@ -29,18 +30,22 @@ class HelpCommand(Command):
     def execute(
         self,
         args: list[str],
-    ) -> None:
+    ) -> Response:
         """
         Execute the help command.
         """
 
-        print()
-        print("=" * 40)
-        print("Available Commands")
-        print("=" * 40)
-        print()
+        lines = [
+            "",
+            "========================================",
+            "Available Commands",
+            "========================================",
+            "",
+        ]
 
         for command in self._registry.commands():
-            print(
+            lines.append(
                 f"{command.name:<10} {command.description}"
             )
+
+        return Response("\n".join(lines))

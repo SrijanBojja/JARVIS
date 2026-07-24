@@ -5,6 +5,7 @@ Echo command for the JARVIS Operating System.
 from __future__ import annotations
 
 from jarvis.commands import Command
+from jarvis.responses import Response
 
 
 class EchoCommand(Command):
@@ -23,9 +24,11 @@ class EchoCommand(Command):
     def execute(
         self,
         args: list[str],
-    ) -> None:
+    ) -> Response:
         """
         Execute the echo command.
         """
 
-        print(" ".join(args))
+        return Response(
+            " ".join(args),
+        )

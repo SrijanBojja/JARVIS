@@ -2,13 +2,10 @@
 Interactive shell for the JARVIS Operating System.
 """
 
-from jarvis import commands
-from jarvis.commands.module import CommandModule
-from jarvis.commands.exceptions import CommandNotFoundError
-from jarvis.skills.module import SkillModule
+from jarvis.conversation import ConversationManager
 from jarvis.utils import (
-    CommandParser,
     CommandHistory,
+    CommandParser,
 )
 
 
@@ -19,14 +16,17 @@ class Shell:
 
     def __init__(
         self,
-        command_module: CommandModule,
-        skill_module: SkillModule,
+        conversation_manager: ConversationManager,
         history: CommandHistory,
     ) -> None:
-        self._command_module = command_module
-        self._skill_module = skill_module
+        """
+        Initialize the shell.
+        """
+
+        self._conversation_manager = conversation_manager
         self._parser = CommandParser()
         self._history = history
+
     @property
     def history(self) -> CommandHistory:
         """
@@ -34,7 +34,7 @@ class Shell:
         """
 
         return self._history
-        
+
     def run(self) -> None:
         """
         Run the interactive shell.
@@ -47,21 +47,26 @@ class Shell:
 
         while True:
             text = input("JARVIS > ").strip()
-            
 
-            command, args = self._parser.parse(text)
-            
-            if not command:
+            if not text:
                 continue
-            
+
             self._history.add(text)
 
-            try:
-                self._command_module.execute(command, args)
+            command, args = self._parser.parse(text)
 
-            except CommandNotFoundError:
-                if not self._skill_module.execute(command, args):
+            try:
+                response = self._conversation_manager.handle(
+                    command,
+                    args,
+                )
+
+                if response is not None:
+                    print(response.text)
+
+                elif command != "calc":
                     print(f"Unknown command: {command}")
 
             except SystemExit:
+                print("Goodbye.")
                 break

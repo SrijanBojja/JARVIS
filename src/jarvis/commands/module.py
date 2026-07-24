@@ -17,7 +17,7 @@ from jarvis.commands.registry import CommandRegistry
 from jarvis.modules import Module
 from jarvis.kernel import Kernel
 from jarvis.utils import CommandHistory
-
+from jarvis.responses import Response
 
 class CommandModule(Module):
     """
@@ -45,14 +45,14 @@ class CommandModule(Module):
         self,
         name: str,
         args: list[str],
-    ) -> None:
+    ) -> Response:
         """
         Execute a registered command.
         """
 
         command = self.command_registry.resolve(name)
 
-        command.execute(args)
+        return command.execute(args)
 
 
     def initialize(self) -> None:

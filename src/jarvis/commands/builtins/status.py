@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from jarvis.commands import Command
 from jarvis.kernel import Kernel
+from jarvis.responses import Response
 
 
 class StatusCommand(Command):
@@ -30,17 +31,17 @@ class StatusCommand(Command):
     def execute(
         self,
         args: list[str],
-    ) -> None:
+    ) -> Response:
         """
         Execute the status command.
         """
 
-        print()
-        print("=" * 40)
-        print("JARVIS STATUS")
-        print("=" * 40)
-        print()
-
-        print(f"Running : {self._kernel.running}")
-        print(f"Version : {self._kernel.version}")
-        print(f"Started : {self._kernel.started_at}")
+        return Response(
+            "\n"
+            "========================================\n"
+            "JARVIS STATUS\n"
+            "========================================\n\n"
+            f"Running : {self._kernel.running}\n"
+            f"Version : {self._kernel.version}\n"
+            f"Started : {self._kernel.started_at}"
+        )

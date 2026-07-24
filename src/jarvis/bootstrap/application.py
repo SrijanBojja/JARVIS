@@ -11,6 +11,7 @@ from jarvis.shell import Shell
 from jarvis.utils import CommandHistory
 from jarvis.skills import SkillModule
 from jarvis.voice import VoiceModule
+from jarvis.conversation import ConversationManager
 
 
 class ApplicationBootstrap:
@@ -22,6 +23,7 @@ class ApplicationBootstrap:
         """
         Initialize the application bootstrapper.
         """
+
         self._container = ServiceContainer()
 
     @property
@@ -29,6 +31,7 @@ class ApplicationBootstrap:
         """
         Return the application's service container.
         """
+
         return self._container
 
     def initialize(self) -> None:
@@ -38,21 +41,26 @@ class ApplicationBootstrap:
 
         initialize_filesystem()
         initialize_logging()
+
         history = CommandHistory()
         voice_module = VoiceModule()
         kernel = Kernel()
 
         command_module = CommandModule(
             kernel,
-            history
+            history,
         )
 
         skill_module = SkillModule()
 
-        shell = Shell(
+        conversation_manager = ConversationManager(
             command_module,
             skill_module,
-            history
+        )
+
+        shell = Shell(
+            conversation_manager,
+            history,
         )
 
         self._container.register(
@@ -66,10 +74,15 @@ class ApplicationBootstrap:
         )
 
         self._container.register(
+            ConversationManager,
+            conversation_manager,
+        )
+
+        self._container.register(
             VoiceModule,
             voice_module,
         )
-        
+
         self._container.register(
             Kernel,
             kernel,
@@ -88,9 +101,11 @@ class ApplicationBootstrap:
         kernel.modules.register(
             command_module,
         )
+
         kernel.modules.register(
             skill_module,
         )
+
         kernel.modules.register(
             voice_module,
         )

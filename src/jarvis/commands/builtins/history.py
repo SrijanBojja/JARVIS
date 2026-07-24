@@ -5,6 +5,7 @@ History command for the JARVIS Operating System.
 from __future__ import annotations
 
 from jarvis.commands import Command
+from jarvis.responses import Response
 from jarvis.utils import CommandHistory
 
 
@@ -30,12 +31,19 @@ class HistoryCommand(Command):
     def execute(
         self,
         args: list[str],
-    ) -> None:
-        print()
-        print("=" * 40)
-        print("COMMAND HISTORY")
-        print("=" * 40)
-        print()
+    ) -> Response:
+        lines = [
+            "",
+            "========================================",
+            "COMMAND HISTORY",
+            "========================================",
+            "",
+        ]
 
-        for index, command in enumerate(self._history.commands(), start=1):
-            print(f"{index:>3}. {command}")
+        for index, command in enumerate(
+            self._history.commands(),
+            start=1,
+        ):
+            lines.append(f"{index:>3}. {command}")
+
+        return Response("\n".join(lines))

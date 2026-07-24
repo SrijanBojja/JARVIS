@@ -4,7 +4,10 @@ Base command definition for the JARVIS Operating System.
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
+from abc import abstractmethod
+
+from jarvis.responses import Response
 
 
 class Command(ABC):
@@ -30,7 +33,7 @@ class Command(ABC):
     def execute(
         self,
         args: list[str],
-    ) -> None:
+    ) -> Response:
         """
         Execute the command.
         """

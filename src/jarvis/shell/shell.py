@@ -5,6 +5,7 @@ Interactive shell for the JARVIS Operating System.
 from jarvis import commands
 from jarvis.commands.module import CommandModule
 from jarvis.commands.exceptions import CommandNotFoundError
+from jarvis.skills.module import SkillModule
 from jarvis.utils import (
     CommandParser,
     CommandHistory,
@@ -19,9 +20,11 @@ class Shell:
     def __init__(
         self,
         command_module: CommandModule,
+        skill_module: SkillModule,
         history: CommandHistory,
     ) -> None:
         self._command_module = command_module
+        self._skill_module = skill_module
         self._parser = CommandParser()
         self._history = history
     @property
@@ -57,7 +60,8 @@ class Shell:
                 self._command_module.execute(command, args)
 
             except CommandNotFoundError:
-                print(f"Unknown command: {command}")
+                if not self._skill_module.execute(command, args):
+                    print(f"Unknown command: {command}")
 
             except SystemExit:
                 break

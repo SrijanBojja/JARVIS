@@ -9,6 +9,7 @@ from jarvis.kernel import Kernel
 from jarvis.commands.module import CommandModule
 from jarvis.shell import Shell
 from jarvis.utils import CommandHistory
+from jarvis.skills import SkillModule
 
 
 class ApplicationBootstrap:
@@ -44,14 +45,23 @@ class ApplicationBootstrap:
             kernel,
             history
         )
+
+        skill_module = SkillModule()
+
         shell = Shell(
             command_module,
+            skill_module,
             history
         )
 
         self._container.register(
             CommandModule,
             command_module,
+        )
+
+        self._container.register(
+            SkillModule,
+            skill_module,
         )
 
         self._container.register(
@@ -71,6 +81,9 @@ class ApplicationBootstrap:
 
         kernel.modules.register(
             command_module,
+        )
+        kernel.modules.register(
+            skill_module,
         )
 
         self._container.resolve(Kernel).start()

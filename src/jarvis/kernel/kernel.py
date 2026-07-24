@@ -6,6 +6,10 @@ the JARVIS Operating System.
 
 from datetime import datetime
 from jarvis.config import settings
+from jarvis.logger import get_logger
+
+logger = get_logger(__name__)
+
 
 class Kernel:
     """Core coordinator for JARVIS."""
@@ -22,7 +26,7 @@ class Kernel:
         self.running = True
 
         print()
-        print("Initializing Kernel...")
+        logger.info("Initializing Kernel...")
         print("[✓] Kernel Started")
         print(f"[✓] Version : {self.version}")
         print(f"[✓] Started : {self.started_at}")

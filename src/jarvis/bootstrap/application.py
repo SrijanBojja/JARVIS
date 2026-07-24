@@ -17,6 +17,7 @@ from jarvis.ai import (
     OllamaProvider,
 )
 from jarvis.ai.memory import ConversationMemory
+from jarvis.voice import VoiceAssistant
 
 class ApplicationBootstrap:
     """
@@ -71,6 +72,10 @@ class ApplicationBootstrap:
             ai_service,
         )
 
+        voice_assistant = VoiceAssistant(
+            conversation_manager,
+        )
+
         shell = Shell(
             conversation_manager,
             history,
@@ -121,6 +126,11 @@ class ApplicationBootstrap:
             memory,
         )
 
+        self._container.register(
+            VoiceAssistant,
+            voice_assistant,
+        )
+
         kernel.modules.register(
             command_module,
         )
@@ -134,4 +144,4 @@ class ApplicationBootstrap:
         )
 
         self._container.resolve(Kernel).start()
-        self._container.resolve(Shell).run()
+        self._container.resolve(VoiceAssistant).run()

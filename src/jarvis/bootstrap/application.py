@@ -10,6 +10,7 @@ from jarvis.commands.module import CommandModule
 from jarvis.shell import Shell
 from jarvis.utils import CommandHistory
 from jarvis.skills import SkillModule
+from jarvis.voice import VoiceModule
 
 
 class ApplicationBootstrap:
@@ -38,7 +39,7 @@ class ApplicationBootstrap:
         initialize_filesystem()
         initialize_logging()
         history = CommandHistory()
-
+        voice_module = VoiceModule()
         kernel = Kernel()
 
         command_module = CommandModule(
@@ -65,6 +66,11 @@ class ApplicationBootstrap:
         )
 
         self._container.register(
+            VoiceModule,
+            voice_module,
+        )
+        
+        self._container.register(
             Kernel,
             kernel,
         )
@@ -84,6 +90,9 @@ class ApplicationBootstrap:
         )
         kernel.modules.register(
             skill_module,
+        )
+        kernel.modules.register(
+            voice_module,
         )
 
         self._container.resolve(Kernel).start()

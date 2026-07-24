@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+from jarvis.ai.message import Message
 from jarvis.responses import Response
 
 
@@ -17,8 +18,8 @@ class AIProvider(ABC):
     @abstractmethod
     def chat(
         self,
-        message: str,
+        messages: list[Message],
     ) -> Response:
         """
-        Generate a response to the user's message.
+        Generate a response from a conversation.
         """

@@ -6,7 +6,8 @@ from __future__ import annotations
 
 import httpx
 
-from jarvis.ai import AIProvider
+from jarvis.ai.provider import AIProvider
+from jarvis.ai.message import Message
 from jarvis.responses import Response
 
 
@@ -25,15 +26,21 @@ class OllamaProvider(AIProvider):
 
     def chat(
         self,
-        message: str,
+        messages: list[Message],
     ) -> Response:
 
         try:
             response = httpx.post(
-                f"{self._host}/api/generate",
+                f"{self._host}/api/chat",
                 json={
                     "model": self._model,
-                    "prompt": message,
+                    "messages": [
+                        {
+                            "role": message.role,
+                            "content": message.content,
+                        }
+                        for message in messages
+                    ],
                     "stream": False,
                 },
                 timeout=120,
@@ -44,7 +51,7 @@ class OllamaProvider(AIProvider):
             data = response.json()
 
             return Response(
-                data["response"].strip(),
+                data["message"]["content"].strip(),
             )
 
         except Exception as error:

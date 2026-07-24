@@ -16,6 +16,7 @@ from jarvis.ai import (
     AIService,
     OllamaProvider,
 )
+from jarvis.ai.memory import ConversationMemory
 
 class ApplicationBootstrap:
     """
@@ -55,10 +56,13 @@ class ApplicationBootstrap:
         )
 
         skill_module = SkillModule()
+
         provider = OllamaProvider()
+        memory = ConversationMemory()
 
         ai_service = AIService(
             provider,
+            memory,
         )
 
         conversation_manager = ConversationManager(
@@ -110,6 +114,11 @@ class ApplicationBootstrap:
         self._container.register(
             AIService,
             ai_service,
+        )
+
+        self._container.register(
+            ConversationMemory,
+            memory,
         )
 
         kernel.modules.register(

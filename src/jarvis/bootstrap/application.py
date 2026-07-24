@@ -14,7 +14,7 @@ from jarvis.voice import VoiceModule
 from jarvis.conversation import ConversationManager
 from jarvis.ai import (
     AIService,
-    MockAIProvider,
+    OllamaProvider,
 )
 
 class ApplicationBootstrap:
@@ -55,7 +55,7 @@ class ApplicationBootstrap:
         )
 
         skill_module = SkillModule()
-        provider = MockAIProvider()
+        provider = OllamaProvider()
 
         ai_service = AIService(
             provider,

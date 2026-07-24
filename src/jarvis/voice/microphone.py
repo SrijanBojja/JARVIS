@@ -15,7 +15,7 @@ class Microphone:
     def __init__(self) -> None:
         self._recognizer = sr.Recognizer()
 
-    def listen(self) -> bytes:
+    def listen(self) -> sr.AudioData | None:
         """
         Listen for audio.
         """
@@ -26,9 +26,18 @@ class Microphone:
 
             self._recognizer.adjust_for_ambient_noise(
                 source,
-                duration=0.5,
+                duration=1.0,
             )
 
-            audio = self._recognizer.listen(source)
+            try:
+                audio = self._recognizer.listen(
+                    source,
+                    timeout=2,
+                    phrase_time_limit=10,
+                )
 
-            return audio
+                return audio
+
+            except sr.WaitTimeoutError:
+                return None
+

@@ -3,12 +3,11 @@ Voice assistant loop.
 """
 
 from __future__ import annotations
-
-from jarvis.voice import (
-    Microphone,
-    Speaker,
-    SpeechRecognizer,
-)
+from jarvis.voice.wakeword import WakeWordDetector
+from jarvis.voice.session import VoiceSession
+from jarvis.voice.microphone import Microphone
+from jarvis.voice.recognizer import SpeechRecognizer
+from jarvis.voice.speaker import Speaker
 from jarvis.conversation import ConversationManager
 from jarvis.utils import CommandParser
 
@@ -27,6 +26,8 @@ class VoiceAssistant:
         self._microphone = Microphone()
         self._recognizer = SpeechRecognizer()
         self._speaker = Speaker()
+        self._wake_word = WakeWordDetector()
+        self._session = VoiceSession()
 
     def listen(self) -> str:
         """
@@ -34,6 +35,9 @@ class VoiceAssistant:
         """
 
         audio = self._microphone.listen()
+
+        if audio is None:
+            return ""
 
         return self._recognizer.recognize(audio)
 
@@ -57,13 +61,37 @@ class VoiceAssistant:
             text = self.listen()
 
             if not text:
+                if self._session.expired():
+                    self.speak("Going back to sleep.")
+                    self._session.stop()
                 continue
-            
+
+            print(f"You: {text}")
+
             if text.lower() == "exit voice":
                 self.speak("Leaving voice mode.")
                 break
-            
-            print(f"You: {text}")
+
+            if not self._session.active:
+
+                command_text = self._wake_word.extract(
+                    text,
+                )
+
+                if command_text is None:
+                    continue
+
+                self._session.start()
+
+                if command_text:
+
+                    text = command_text
+
+                else:
+                    self.speak("Yes?")
+                    continue
+
+            self._session.refresh()
 
             command, args = self._parser.parse(
                 text,
@@ -74,9 +102,11 @@ class VoiceAssistant:
                 args,
             )
 
-            if response is None:
-                continue
+            if response is not None:
+                self.speak(
+                    response.text,
+                )
 
-            self.speak(
-                response.text,
-            )
+            if self._session.expired():
+                self.speak("Going back to sleep.")
+                self._session.stop()

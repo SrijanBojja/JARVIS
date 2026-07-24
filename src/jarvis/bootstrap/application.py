@@ -12,7 +12,10 @@ from jarvis.utils import CommandHistory
 from jarvis.skills import SkillModule
 from jarvis.voice import VoiceModule
 from jarvis.conversation import ConversationManager
-
+from jarvis.ai import (
+    AIService,
+    MockAIProvider,
+)
 
 class ApplicationBootstrap:
     """
@@ -52,10 +55,16 @@ class ApplicationBootstrap:
         )
 
         skill_module = SkillModule()
+        provider = MockAIProvider()
+
+        ai_service = AIService(
+            provider,
+        )
 
         conversation_manager = ConversationManager(
             command_module,
             skill_module,
+            ai_service,
         )
 
         shell = Shell(
@@ -96,6 +105,11 @@ class ApplicationBootstrap:
         self._container.register(
             Shell,
             shell,
+        )
+
+        self._container.register(
+            AIService,
+            ai_service,
         )
 
         kernel.modules.register(

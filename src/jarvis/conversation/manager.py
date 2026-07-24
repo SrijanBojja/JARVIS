@@ -8,6 +8,7 @@ from jarvis.commands.module import CommandModule
 from jarvis.commands.exceptions import CommandNotFoundError
 from jarvis.skills.module import SkillModule
 from jarvis.responses import Response
+from jarvis.ai import AIService
 
 class ConversationManager:
     """
@@ -18,6 +19,7 @@ class ConversationManager:
         self,
         command_module: CommandModule,
         skill_module: SkillModule,
+        ai_service: AIService,
     ) -> None:
         """
         Initialize the conversation manager.
@@ -25,6 +27,7 @@ class ConversationManager:
 
         self._command_module = command_module
         self._skill_module = skill_module
+        self._ai_service = ai_service
 
     def handle(
         self,
@@ -50,4 +53,10 @@ class ConversationManager:
             if response is not None:
                 return response
 
-        return None
+        message = " ".join(
+            [command, *args],
+        ).strip()
+
+        return self._ai_service.chat(
+            message,
+        )

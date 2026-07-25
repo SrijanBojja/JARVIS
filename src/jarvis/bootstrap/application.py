@@ -18,6 +18,23 @@ from jarvis.ai import (
 )
 from jarvis.ai.memory import ConversationMemory
 from jarvis.voice import VoiceAssistant
+from jarvis.intents import IntentResolver
+from jarvis.actions import (
+    ActionBuilder,
+    ActionEngine,
+)
+from jarvis.actions.executors import (
+    EchoActionExecutor,
+    OpenApplicationExecutor,
+)
+from jarvis.applications import (
+    ApplicationCache,
+    ApplicationLauncher,
+    ApplicationManager,
+    ApplicationRegistry,
+    ApplicationScanner,
+)
+
 
 class ApplicationBootstrap:
     """
@@ -65,11 +82,39 @@ class ApplicationBootstrap:
             provider,
             memory,
         )
+        intent_resolver = IntentResolver()
+        action_engine = ActionEngine()
+        action_builder = ActionBuilder()
+        application_registry = ApplicationRegistry()
+        application_cache = ApplicationCache()
+        application_scanner = ApplicationScanner()
+        application_launcher = ApplicationLauncher()
+
+        application_manager = ApplicationManager(
+            application_registry,
+            application_cache,
+            application_scanner,
+        )
+        application_manager.initialize()
+
+        action_engine.register(
+            EchoActionExecutor(),
+        )
+        action_engine.register(
+            OpenApplicationExecutor(
+                application_registry,
+                application_launcher,
+            ),
+        )
+
 
         conversation_manager = ConversationManager(
             command_module,
             skill_module,
             ai_service,
+            intent_resolver,
+            action_builder,
+            action_engine,
         )
 
         voice_assistant = VoiceAssistant(
@@ -122,6 +167,46 @@ class ApplicationBootstrap:
         )
 
         self._container.register(
+            IntentResolver,
+            intent_resolver,
+        )
+
+        self._container.register(
+            ActionEngine,
+            action_engine,
+        )
+
+        self._container.register(
+            ActionBuilder,
+            action_builder,
+        )
+
+        self._container.register(
+            ApplicationRegistry,
+            application_registry,
+        )
+
+        self._container.register(
+            ApplicationCache,
+            application_cache,
+        )
+
+        self._container.register(
+            ApplicationManager,
+            application_manager,
+        )
+
+        self._container.register(
+            ApplicationScanner,
+            application_scanner,
+        )
+
+        self._container.register(
+            ApplicationLauncher,
+            application_launcher,
+        )
+
+        self._container.register(
             ConversationMemory,
             memory,
         )
@@ -144,4 +229,4 @@ class ApplicationBootstrap:
         )
 
         self._container.resolve(Kernel).start()
-        self._container.resolve(VoiceAssistant).run()
+        self._container.resolve(Shell).run()

@@ -1,0 +1,352 @@
+{
+    "applications": [
+        {
+            "name": "excel",
+            "executable": "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE"
+        },
+        {
+            "name": "google chrome",
+            "executable": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        },
+        {
+            "name": "microsoft edge",
+            "executable": "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe"
+        },
+        {
+            "name": "onedrive photos",
+            "executable": "C:\\Program Files\\Microsoft OneDrive\\OneDrive.App.exe"
+        },
+        {
+            "name": "onedrive",
+            "executable": "C:\\Program Files\\Microsoft OneDrive\\OneDrive.exe"
+        },
+        {
+            "name": "onenote",
+            "executable": "C:\\Program Files\\Microsoft Office\\root\\Office16\\ONENOTE.EXE"
+        },
+        {
+            "name": "powerpoint",
+            "executable": "C:\\Program Files\\Microsoft Office\\root\\Office16\\POWERPNT.EXE"
+        },
+        {
+            "name": "safe exam browser",
+            "executable": "C:\\Program Files\\SafeExamBrowser\\Application\\SafeExamBrowser.exe"
+        },
+        {
+            "name": "sticky notes (new)",
+            "executable": "C:\\Program Files\\Microsoft Office\\root\\Office16\\ONENOTE.EXE"
+        },
+        {
+            "name": "word",
+            "executable": "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE"
+        },
+        {
+            "name": "wsl settings",
+            "executable": "C:\\windows\\Installer\\{D9B1F431-FD08-4034-9544-44E6C7D32EBD}\\wsl.ico"
+        },
+        {
+            "name": "wsl",
+            "executable": "C:\\windows\\Installer\\{D9B1F431-FD08-4034-9544-44E6C7D32EBD}\\wsl.ico"
+        },
+        {
+            "name": "remote desktop connection",
+            "executable": "C:\\windows\\system32\\mstsc.exe"
+        },
+        {
+            "name": "steps recorder",
+            "executable": "C:\\windows\\system32\\psr.exe"
+        },
+        {
+            "name": "windows media player legacy",
+            "executable": "C:\\Program Files (x86)\\Windows Media Player\\wmplayer.exe"
+        },
+        {
+            "name": "component services",
+            "executable": "C:\\windows\\system32\\comexp.msc"
+        },
+        {
+            "name": "computer management",
+            "executable": "C:\\windows\\system32\\compmgmt.msc"
+        },
+        {
+            "name": "dfrgui",
+            "executable": "C:\\windows\\system32\\dfrgui.exe"
+        },
+        {
+            "name": "disk cleanup",
+            "executable": "C:\\windows\\system32\\cleanmgr.exe"
+        },
+        {
+            "name": "event viewer",
+            "executable": "C:\\windows\\system32\\eventvwr.msc"
+        },
+        {
+            "name": "odbc data sources (32-bit)",
+            "executable": "C:\\windows\\system32\\odbcad32.exe"
+        },
+        {
+            "name": "odbc data sources (64-bit)",
+            "executable": "C:\\windows\\system32\\odbcad32.exe"
+        },
+        {
+            "name": "performance monitor",
+            "executable": "C:\\windows\\system32\\perfmon.msc"
+        },
+        {
+            "name": "recoverydrive",
+            "executable": "C:\\windows\\system32\\RecoveryDrive.exe"
+        },
+        {
+            "name": "registry editor",
+            "executable": "C:\\windows\\regedit.exe"
+        },
+        {
+            "name": "resource monitor",
+            "executable": "C:\\windows\\system32\\perfmon.exe"
+        },
+        {
+            "name": "services",
+            "executable": "C:\\windows\\system32\\services.msc"
+        },
+        {
+            "name": "system configuration",
+            "executable": "C:\\windows\\system32\\msconfig.exe"
+        },
+        {
+            "name": "system information",
+            "executable": "C:\\windows\\system32\\msinfo32.exe"
+        },
+        {
+            "name": "task scheduler",
+            "executable": "C:\\windows\\system32\\taskschd.msc"
+        },
+        {
+            "name": "windows defender firewall with advanced security",
+            "executable": "C:\\windows\\system32\\WF.msc"
+        },
+        {
+            "name": "git bash",
+            "executable": "C:\\Program Files\\Git\\git-bash.exe"
+        },
+        {
+            "name": "git cmd",
+            "executable": "C:\\Program Files\\Git\\git-cmd.exe"
+        },
+        {
+            "name": "git gui",
+            "executable": "C:\\Program Files\\Git\\cmd\\git-gui.exe"
+        },
+        {
+            "name": "git release notes",
+            "executable": "C:\\Program Files\\Git\\ReleaseNotes.html"
+        },
+        {
+            "name": "minikube",
+            "executable": "C:\\Program Files\\Kubernetes\\Minikube\\minikube.exe"
+        },
+        {
+            "name": "office language preferences",
+            "executable": "C:\\Program Files\\Microsoft Office\\root\\Office16\\SETLANG.EXE"
+        },
+        {
+            "name": "play",
+            "executable": "C:\\Program Files (x86)\\NFS Most Wanted\\speed.exe"
+        },
+        {
+            "name": "install additional tools for node.js",
+            "executable": "C:\\Windows\\System32\\cmd.exe"
+        },
+        {
+            "name": "node.js command prompt",
+            "executable": "C:\\Windows\\System32\\cmd.exe"
+        },
+        {
+            "name": "node.js",
+            "executable": "C:\\Program Files\\nodejs\\node.exe"
+        },
+        {
+            "name": "uninstall node.js",
+            "executable": "C:\\Windows\\SysWOW64\\msiexec.exe"
+        },
+        {
+            "name": "application stack builder",
+            "executable": "C:\\Program Files\\PostgreSQL\\18\\bin\\stackbuilder.exe"
+        },
+        {
+            "name": "pgadmin 4",
+            "executable": "C:\\Program Files\\PostgreSQL\\18\\pgAdmin 4\\runtime\\pgAdmin4.exe"
+        },
+        {
+            "name": "reload configuration",
+            "executable": "C:\\Program Files\\PostgreSQL\\18\\bin\\pg_ctl.exe"
+        },
+        {
+            "name": "sql shell (psql)",
+            "executable": "C:\\Program Files\\PostgreSQL\\18\\scripts\\runpsql.bat"
+        },
+        {
+            "name": "proton vpn",
+            "executable": "C:\\Program Files\\Proton\\VPN\\ProtonVPN.Launcher.exe"
+        },
+        {
+            "name": "seb configuration tool",
+            "executable": "C:\\Program Files\\SafeExamBrowser\\Configuration\\SEBConfigTool.exe"
+        },
+        {
+            "name": "seb reset utility",
+            "executable": "C:\\Program Files\\SafeExamBrowser\\Reset\\SafeExamBrowser.ResetUtility.exe"
+        },
+        {
+            "name": "task manager",
+            "executable": "C:\\windows\\system32\\taskmgr.exe"
+        },
+        {
+            "name": "windows powershell ise (x64)",
+            "executable": "C:\\windows\\system32\\cmd.exe"
+        },
+        {
+            "name": "windows powershell ise (x86)",
+            "executable": "C:\\windows\\syswow64\\WindowsPowerShell\\v1.0\\PowerShell_ISE.exe"
+        },
+        {
+            "name": "windows powershell ise",
+            "executable": "C:\\windows\\system32\\WindowsPowerShell\\v1.0\\PowerShell_ISE.exe"
+        },
+        {
+            "name": "help",
+            "executable": "C:\\Program Files (x86)\\NFS Most Wanted\\Support\\EA Help\\Welcome.htm"
+        },
+        {
+            "name": "readme",
+            "executable": "C:\\Program Files (x86)\\NFS Most Wanted\\Support\\en-us\\readme.txt"
+        },
+        {
+            "name": "change language",
+            "executable": "C:\\Program Files (x86)\\NFS Most Wanted\\change_language.exe"
+        },
+        {
+            "name": "custom resolution",
+            "executable": "C:\\Program Files (x86)\\NFS Most Wanted\\nfsmwres.exe"
+        },
+        {
+            "name": "character map",
+            "executable": "C:\\windows\\system32\\charmap.exe"
+        },
+        {
+            "name": "administrative tools",
+            "executable": "C:\\windows\\system32\\control.exe"
+        },
+        {
+            "name": "antigravity",
+            "executable": "C:\\Users\\srija\\AppData\\Local\\Programs\\Antigravity\\Antigravity.exe"
+        },
+        {
+            "name": "docker desktop",
+            "executable": "C:\\Program Files\\Docker\\Docker\\Docker Desktop.exe"
+        },
+        {
+            "name": "file explorer",
+            "executable": "."
+        },
+        {
+            "name": "neo browser",
+            "executable": "C:\\Users\\srija\\AppData\\Local\\Programs\\Neo Browser\\Neo Browser.exe"
+        },
+        {
+            "name": "ollama",
+            "executable": "C:\\Users\\srija\\AppData\\Local\\Programs\\Ollama\\ollama app.exe"
+        },
+        {
+            "name": "livecaptions",
+            "executable": "C:\\windows\\system32\\LiveCaptions.exe"
+        },
+        {
+            "name": "magnify",
+            "executable": "C:\\windows\\system32\\magnify.exe"
+        },
+        {
+            "name": "narrator",
+            "executable": "C:\\windows\\system32\\narrator.exe"
+        },
+        {
+            "name": "on-screen keyboard",
+            "executable": "C:\\windows\\system32\\osk.exe"
+        },
+        {
+            "name": "voiceaccess",
+            "executable": "C:\\windows\\system32\\voiceaccess.exe"
+        },
+        {
+            "name": "anaconda navigator",
+            "executable": "C:\\Users\\srija\\anaconda3\\pythonw.exe"
+        },
+        {
+            "name": "anaconda powershell prompt",
+            "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+        },
+        {
+            "name": "anaconda prompt",
+            "executable": "C:\\Windows\\System32\\cmd.exe"
+        },
+        {
+            "name": "jupyter notebook",
+            "executable": "C:\\Users\\srija\\anaconda3\\python.exe"
+        },
+        {
+            "name": "spyder",
+            "executable": "C:\\Users\\srija\\anaconda3\\pythonw.exe"
+        },
+        {
+            "name": "antigravity ide",
+            "executable": "C:\\Users\\srija\\AppData\\Local\\Programs\\Antigravity IDE\\Antigravity IDE.exe"
+        },
+        {
+            "name": "discord",
+            "executable": "C:\\Users\\srija\\AppData\\Local\\Discord\\Update.exe"
+        },
+        {
+            "name": "eclipse ide for java developers - 2025-12",
+            "executable": "C:\\Users\\srija\\eclipse\\java-2025-123\\eclipse\\eclipse.exe"
+        },
+        {
+            "name": "eclipse ide for java developers - 2026-06",
+            "executable": "C:\\Users\\srija\\eclipse\\java-2026-06\\eclipse\\eclipse.exe"
+        },
+        {
+            "name": "uninstall",
+            "executable": "C:\\Program Files (x86)\\NFS Most Wanted\\uninstall.exe"
+        },
+        {
+            "name": "postman",
+            "executable": "C:\\Users\\srija\\AppData\\Local\\Postman\\Postman.exe"
+        },
+        {
+            "name": "send to onenote",
+            "executable": "C:\\Program Files\\Microsoft Office\\root\\Office16\\ONENOTEM.EXE"
+        },
+        {
+            "name": "command prompt",
+            "executable": "C:\\windows\\system32\\cmd.exe"
+        },
+        {
+            "name": "control panel",
+            "executable": "."
+        },
+        {
+            "name": "run",
+            "executable": "."
+        },
+        {
+            "name": "windows powershell (x64)",
+            "executable": "C:\\windows\\system32\\cmd.exe"
+        },
+        {
+            "name": "windows powershell (x86)",
+            "executable": "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe"
+        },
+        {
+            "name": "windows powershell",
+            "executable": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"
+        }
+    ]
+}

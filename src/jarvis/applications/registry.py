@@ -2,6 +2,7 @@
 Application registry.
 """
 
+from jarvis.applications.alias import ApplicationAliasGenerator
 from jarvis.applications.application import Application
 
 
@@ -11,9 +12,13 @@ class ApplicationRegistry:
     """
 
     def __init__(
-        self,
+    self,
+        alias_generator: ApplicationAliasGenerator,
     ) -> None:
         self._applications: dict[str, Application] = {}
+        self._aliases: dict[str, Application] = {}
+
+        self._alias_generator = alias_generator
 
     def register(
         self,
@@ -23,9 +28,14 @@ class ApplicationRegistry:
         Register an application.
         """
 
-        self._applications[
-            application.name.lower()
-        ] = application
+        name = application.name.lower()
+
+        self._applications[name] = application
+
+        for alias in self._alias_generator.generate(
+            application,
+        ):
+            self._aliases[alias] = application
 
     def register_many(
         self,
@@ -48,7 +58,7 @@ class ApplicationRegistry:
         Find an application.
         """
 
-        return self._applications.get(
+        return self._aliases.get(
             name.lower(),
         )
 
@@ -60,10 +70,29 @@ class ApplicationRegistry:
         Remove an application.
         """
 
+        application = self.find(
+            name,
+        )
+
+        if application is None:
+            return
+
         self._applications.pop(
-            name.lower(),
+            application.name.lower(),
             None,
         )
+
+        aliases = [
+            alias
+            for alias, value in self._aliases.items()
+            if value is application
+        ]
+
+        for alias in aliases:
+            self._aliases.pop(
+                alias,
+                None,
+            )
 
     def all(
         self,

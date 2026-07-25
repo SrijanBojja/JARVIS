@@ -5,7 +5,9 @@ Application manager.
 from jarvis.applications import (
     ApplicationCache,
     ApplicationRegistry,
-    ApplicationScanner,
+)
+from jarvis.applications.discovery import (
+    ApplicationDiscoveryService,
 )
 
 
@@ -18,11 +20,11 @@ class ApplicationManager:
         self,
         registry: ApplicationRegistry,
         cache: ApplicationCache,
-        scanner: ApplicationScanner,
+        discovery: ApplicationDiscoveryService,
     ) -> None:
         self._registry = registry
         self._cache = cache
-        self._scanner = scanner
+        self._discovery = discovery
 
     def initialize(
         self,
@@ -35,7 +37,7 @@ class ApplicationManager:
             self._cache.load(),
         )
 
-        discovered = self._scanner.scan()
+        discovered = self._discovery.discover()
 
         self._registry.register_many(
             discovered,

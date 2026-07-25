@@ -1,5 +1,5 @@
 """
-Application scanner.
+Start Menu application discovery.
 """
 
 from __future__ import annotations
@@ -7,27 +7,33 @@ from __future__ import annotations
 from pathlib import Path
 
 from jarvis.applications.application import Application
-from jarvis.applications.shortcut import ShortcutResolver
 from jarvis.applications.method import LaunchMethod
+from jarvis.applications.shortcut import ShortcutResolver
+from jarvis.applications.discovery.base import ApplicationDiscoverySource
 
-class ApplicationScanner:
+
+class StartMenuScanner(ApplicationDiscoverySource):
     """
-    Discovers installed applications.
+    Discovers applications from the Windows Start Menu.
     """
-    
-    def scan(
+
+    def discover(
         self,
     ) -> list[Application]:
         """
-        Scan Windows Start Menu shortcuts.
+        Discover Start Menu applications.
         """
+
         resolver = ShortcutResolver()
+
         applications: list[Application] = []
 
         locations = [
-            Path(r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs"),
-            Path.home() /
-            r"AppData\Roaming\Microsoft\Windows\Start Menu\Programs",
+            Path(
+                r"C:\ProgramData\Microsoft\Windows\Start Menu\Programs",
+            ),
+            Path.home()
+            / r"AppData\Roaming\Microsoft\Windows\Start Menu\Programs",
         ]
 
         for location in locations:

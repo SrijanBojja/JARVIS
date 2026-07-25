@@ -8,6 +8,7 @@ import json
 
 from jarvis.applications.application import Application
 from jarvis.config import settings
+from jarvis.applications.method import LaunchMethod
 
 
 class ApplicationCache:
@@ -38,7 +39,18 @@ class ApplicationCache:
         return [
             Application(
                 name=item["name"],
-                executable=item["executable"],
+                target=item["target"],
+                launch_method=LaunchMethod(
+                    item["launch_method"],
+                ),
+                source=item.get(
+                    "source",
+                    "",
+                ),
+                aliases=item.get(
+                    "aliases",
+                    [],
+                ),
             )
             for item in data["applications"]
         ]
@@ -55,7 +67,10 @@ class ApplicationCache:
             "applications": [
                 {
                     "name": application.name,
-                    "executable": application.executable,
+                    "target": application.target,
+                    "launch_method": application.launch_method.value,
+                    "source": application.source,
+                    "aliases": application.aliases,
                 }
                 for application in applications
             ]

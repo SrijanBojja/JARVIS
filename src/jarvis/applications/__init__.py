@@ -9,6 +9,8 @@ from .scanner import ApplicationScanner
 from .cache import ApplicationCache
 from .manager import ApplicationManager
 from .shortcut import ShortcutResolver
+from .alias import ApplicationAliasGenerator
+from .method import LaunchMethod
 
 __all__ = [
     "Application",
@@ -18,4 +20,6 @@ __all__ = [
     "ApplicationCache",
     "ApplicationManager",
     "ShortcutResolver",
+    "ApplicationAliasGenerator",
+    "LaunchMethod",
 ]

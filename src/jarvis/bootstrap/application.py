@@ -28,11 +28,17 @@ from jarvis.actions.executors import (
     OpenApplicationExecutor,
 )
 from jarvis.applications import (
+    ApplicationAliasGenerator,
     ApplicationCache,
     ApplicationLauncher,
     ApplicationManager,
     ApplicationRegistry,
-    ApplicationScanner,
+)
+
+from jarvis.applications.discovery import (
+    ApplicationDiscoveryService,
+    StartMenuScanner,
+    PathScanner,
 )
 
 
@@ -85,15 +91,33 @@ class ApplicationBootstrap:
         intent_resolver = IntentResolver()
         action_engine = ActionEngine()
         action_builder = ActionBuilder()
-        application_registry = ApplicationRegistry()
+        application_alias_generator = ApplicationAliasGenerator()
+
+        application_registry = ApplicationRegistry(
+            application_alias_generator,
+        )
+
         application_cache = ApplicationCache()
-        application_scanner = ApplicationScanner()
+
+        start_menu_scanner = StartMenuScanner()
+        path_scanner = PathScanner()
+
+        application_discovery = ApplicationDiscoveryService()
+
+        application_discovery.register(
+            start_menu_scanner,
+        )
+
+        application_discovery.register(
+            path_scanner,
+        )
+
         application_launcher = ApplicationLauncher()
 
         application_manager = ApplicationManager(
             application_registry,
             application_cache,
-            application_scanner,
+            application_discovery,
         )
         application_manager.initialize()
 
@@ -197,8 +221,23 @@ class ApplicationBootstrap:
         )
 
         self._container.register(
-            ApplicationScanner,
-            application_scanner,
+            StartMenuScanner,
+            start_menu_scanner,
+        )
+
+        self._container.register(
+            PathScanner,
+            path_scanner,
+        )
+
+        self._container.register(
+            ApplicationDiscoveryService,
+            application_discovery,
+        )
+
+        self._container.register(
+            ApplicationAliasGenerator,
+            application_alias_generator,
         )
 
         self._container.register(

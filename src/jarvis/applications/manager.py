@@ -4,10 +4,12 @@ Application manager.
 
 from jarvis.applications import (
     ApplicationCache,
-    ApplicationRegistry,
 )
 from jarvis.applications.discovery import (
     ApplicationDiscoveryService,
+)
+from jarvis.applications.store import (
+    ApplicationStore,
 )
 
 
@@ -18,11 +20,11 @@ class ApplicationManager:
 
     def __init__(
         self,
-        registry: ApplicationRegistry,
+        store: ApplicationStore,
         cache: ApplicationCache,
         discovery: ApplicationDiscoveryService,
     ) -> None:
-        self._registry = registry
+        self._store = store
         self._cache = cache
         self._discovery = discovery
 
@@ -33,16 +35,16 @@ class ApplicationManager:
         Initialize the application subsystem.
         """
 
-        self._registry.register_many(
+        self._store.add_many(
             self._cache.load(),
         )
 
         discovered = self._discovery.discover()
 
-        self._registry.register_many(
+        self._store.add_many(
             discovered,
         )
 
         self._cache.save(
-            self._registry.all(),
+            self._store.all(),
         )

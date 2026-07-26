@@ -36,9 +36,9 @@ class Kernel:
 
         print()
         logger.info("Initializing Kernel...")
-        print("[✓] Kernel Started")
-        print(f"[✓] Version : {self.version}")
-        print(f"[✓] Started : {self.started_at}")
+        print("[OK] Kernel Started")
+        print(f"[OK] Version : {self.version}")
+        print(f"[OK] Started : {self.started_at}")
 
     def stop(self) -> None:
         """Stop the kernel."""
@@ -49,4 +49,4 @@ class Kernel:
 
         print()
         print("Shutting Down...")
-        print("[✓] Kernel Stopped")
+        print("[OK] Kernel Stopped")

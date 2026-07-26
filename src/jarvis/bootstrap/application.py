@@ -11,7 +11,10 @@ from jarvis.shell import Shell
 from jarvis.utils import CommandHistory
 from jarvis.skills import SkillModule
 from jarvis.voice import VoiceModule
-from jarvis.conversation import ConversationManager
+from jarvis.conversation import (
+    ConversationManager,
+    ConversationSession,
+)
 from jarvis.ai import (
     AIService,
     OllamaProvider,
@@ -32,13 +35,26 @@ from jarvis.applications import (
     ApplicationCache,
     ApplicationLauncher,
     ApplicationManager,
-    ApplicationRegistry,
 )
-
+from jarvis.applications.search import (
+    ApplicationSearchEngine,
+)
+from jarvis.applications.search.matchers import (
+    ExactMatchMatcher,
+)
 from jarvis.applications.discovery import (
     ApplicationDiscoveryService,
     StartMenuScanner,
     PathScanner,
+)
+from jarvis.applications.store import (
+    ApplicationStore,
+)
+
+from jarvis.applications.store.indexes import (
+    NameIndex,
+    AliasIndex,
+    SourceIndex,
 )
 
 
@@ -83,6 +99,7 @@ class ApplicationBootstrap:
 
         provider = OllamaProvider()
         memory = ConversationMemory()
+        conversation_session = ConversationSession()
 
         ai_service = AIService(
             provider,
@@ -93,8 +110,18 @@ class ApplicationBootstrap:
         action_builder = ActionBuilder()
         application_alias_generator = ApplicationAliasGenerator()
 
-        application_registry = ApplicationRegistry(
+        name_index = NameIndex()
+
+        alias_index = AliasIndex(
             application_alias_generator,
+        )
+
+        source_index = SourceIndex()
+
+        application_store = ApplicationStore(
+            name_index,
+            alias_index,
+            source_index,
         )
 
         application_cache = ApplicationCache()
@@ -113,9 +140,20 @@ class ApplicationBootstrap:
         )
 
         application_launcher = ApplicationLauncher()
+        application_search_engine = (
+            ApplicationSearchEngine()
+        )
+
+        exact_match_matcher = ExactMatchMatcher(
+            application_alias_generator,
+        )
+
+        application_search_engine.register(
+            exact_match_matcher,
+        )
 
         application_manager = ApplicationManager(
-            application_registry,
+            application_store,
             application_cache,
             application_discovery,
         )
@@ -126,7 +164,8 @@ class ApplicationBootstrap:
         )
         action_engine.register(
             OpenApplicationExecutor(
-                application_registry,
+                application_search_engine,
+                application_store,
                 application_launcher,
             ),
         )
@@ -139,6 +178,8 @@ class ApplicationBootstrap:
             intent_resolver,
             action_builder,
             action_engine,
+            conversation_session,
+            application_launcher,
         )
 
         voice_assistant = VoiceAssistant(
@@ -181,6 +222,11 @@ class ApplicationBootstrap:
         )
 
         self._container.register(
+            ConversationSession,
+            conversation_session,
+        )
+
+        self._container.register(
             Shell,
             shell,
         )
@@ -206,8 +252,23 @@ class ApplicationBootstrap:
         )
 
         self._container.register(
-            ApplicationRegistry,
-            application_registry,
+            ApplicationStore,
+            application_store,
+        )
+
+        self._container.register(
+            NameIndex,
+            name_index,
+        )
+
+        self._container.register(
+            AliasIndex,
+            alias_index,
+        )
+
+        self._container.register(
+            SourceIndex,
+            source_index,
         )
 
         self._container.register(
@@ -243,6 +304,11 @@ class ApplicationBootstrap:
         self._container.register(
             ApplicationLauncher,
             application_launcher,
+        )
+
+        self._container.register(
+            ApplicationSearchEngine,
+            application_search_engine,
         )
 
         self._container.register(

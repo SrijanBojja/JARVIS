@@ -4,17 +4,23 @@ Open application executor.
 
 from __future__ import annotations
 
-import subprocess
-
 from jarvis.actions import (
     Action,
     ActionExecutor,
 )
 from jarvis.applications import (
     ApplicationLauncher,
-    ApplicationRegistry,
 )
-from jarvis.responses import Response
+from jarvis.applications.search import (
+    ApplicationSearchEngine,
+)
+from jarvis.applications.store import (
+    ApplicationStore,
+)
+from jarvis.responses import (
+    Response,
+    ResponseStatus,
+)
 
 
 class OpenApplicationExecutor(ActionExecutor):
@@ -24,14 +30,12 @@ class OpenApplicationExecutor(ActionExecutor):
 
     def __init__(
         self,
-        registry: ApplicationRegistry,
+        search_engine: ApplicationSearchEngine,
+        store: ApplicationStore,
         launcher: ApplicationLauncher,
     ) -> None:
-        """
-        Initialize the executor.
-        """
-
-        self._registry = registry
+        self._search_engine = search_engine
+        self._store = store
         self._launcher = launcher
 
     def supports(
@@ -49,19 +53,56 @@ class OpenApplicationExecutor(ActionExecutor):
             action.target or ""
         ).lower()
 
-        application = self._registry.find(
+        response = self._search_engine.search(
             target,
+            self._store,
         )
 
-        if application is None:
+        if not response.has_match:
+
             return Response(
-                f"I couldn't find '{target}'."
+                text=f"I couldn't find '{target}'.",
+                status=ResponseStatus.NOT_FOUND,
             )
+
+        if response.is_ambiguous:
+
+            names = [
+                result.application.name
+                for result in response.matches
+            ]
+
+            message = (
+                "I found multiple applications:\n\n"
+            )
+
+            for index, name in enumerate(
+                names,
+                start=1,
+            ):
+                message += (
+                    f"{index}. {name}\n"
+                )
+
+            message += (
+                "\nWhich one would you like to open?"
+            )
+
+            return Response(
+                text=message,
+                status=ResponseStatus.AMBIGUOUS,
+                data=response.matches,
+            )
+
+        application = (
+            response.best_match.application
+        )
 
         self._launcher.launch(
             application,
         )
 
         return Response(
-            f"Opening {application.name}..."
+            text=f"Opening {application.name}...",
+            status=ResponseStatus.SUCCESS,
         )

@@ -4,19 +4,22 @@ Conversation manager.
 
 from __future__ import annotations
 
-from jarvis.commands.module import CommandModule
-from jarvis.commands.exceptions import CommandNotFoundError
-from jarvis.skills.module import SkillModule
-from jarvis.responses import Response
 from jarvis.ai import AIService
-from jarvis.intents import (
-    Intent,
-    IntentResolver,
-)
+from jarvis.applications import ApplicationLauncher
+from jarvis.commands.exceptions import CommandNotFoundError
+from jarvis.commands.module import CommandModule
 from jarvis.actions import (
     ActionBuilder,
     ActionEngine,
 )
+from jarvis.intents import IntentResolver
+from jarvis.responses import (
+    Response,
+    ResponseStatus,
+)
+from jarvis.skills.module import SkillModule
+from .session import ConversationSession
+
 
 class ConversationManager:
     """
@@ -31,6 +34,8 @@ class ConversationManager:
         intent_resolver: IntentResolver,
         action_builder: ActionBuilder,
         action_engine: ActionEngine,
+        conversation_session: ConversationSession,
+        application_launcher: ApplicationLauncher,
     ) -> None:
         """
         Initialize the conversation manager.
@@ -42,6 +47,13 @@ class ConversationManager:
         self._intent_resolver = intent_resolver
         self._action_builder = action_builder
         self._action_engine = action_engine
+        self._conversation_session = (
+            conversation_session
+        )
+        self._application_launcher = (
+            application_launcher
+        )
+
 
     def handle(
         self,
@@ -51,19 +63,110 @@ class ConversationManager:
         """
         Handle parsed user input.
         """
+        
+        if (
+            self._conversation_session.waiting_for_application
+        ):
+            message = " ".join(
+                [command, *args],
+            ).strip().lower()
+
+            matches = (
+                self._conversation_session.pending_applications
+            )
+
+            if matches is None:
+                self._conversation_session.clear()
+
+            elif message in {
+                "cancel",
+                "exit",
+            }:
+                self._conversation_session.clear()
+
+                return Response(
+                    text="Cancelled.",
+                )
+
+            elif message.isdigit():
+
+                index = int(message) - 1
+
+                if 0 <= index < len(matches):
+
+                    application = (
+                        matches[index].application
+                    )
+
+                    self._conversation_session.clear()
+
+                    self._application_launcher.launch(
+                        application,
+                    )
+
+                    return Response(
+                        text=f"Opening {application.name}...",
+                        status=ResponseStatus.SUCCESS,
+                    )
+
+                return Response(
+                    text="Invalid selection.",
+                )
+
+            else:
+
+                for result in matches:
+
+                    application = result.application
+
+                    if (
+                        message
+                        == application.name.lower()
+                    ):
+                        self._conversation_session.clear()
+
+                        self._application_launcher.launch(
+                            application,
+                        )
+
+                        return Response(
+                            text=f"Opening {application.name}...",
+                            status=ResponseStatus.SUCCESS,
+                        )
+
+                return Response(
+                    text=(
+                        "Please choose one of the listed "
+                        "applications or type 'cancel'."
+                    ),
+                )
 
         intent = self._intent_resolver.resolve(
             command,
         )
+
         action = self._action_builder.build(
             intent,
             args,
         )
 
         if action is not None:
-            return self._action_engine.execute(
+
+            response = self._action_engine.execute(
                 action,
             )
+
+            if (
+                response.status
+                == ResponseStatus.AMBIGUOUS
+            ):
+                self._conversation_session.pending_applications = (
+                    response.data
+                )
+            else:
+                self._conversation_session.clear()
+
+            return response
 
         try:
             return self._command_module.execute(
@@ -72,6 +175,7 @@ class ConversationManager:
             )
 
         except CommandNotFoundError:
+
             response = self._skill_module.execute(
                 intent.name,
                 args,

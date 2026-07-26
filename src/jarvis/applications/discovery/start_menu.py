@@ -46,7 +46,6 @@ class StartMenuScanner(ApplicationDiscoverySource):
                 target = resolver.resolve(
                     shortcut,
                 )
-
                 if target is None:
                     continue
 

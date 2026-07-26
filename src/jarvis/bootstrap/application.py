@@ -64,7 +64,12 @@ from jarvis.services.power.service import (
 from jarvis.services.power.windows import (
     WindowsPowerService,
 )
-
+from jarvis.services.process.service import (
+    ProcessService,
+)
+from jarvis.services.process.windows import (
+    WindowsProcessService,
+)
 
 class ApplicationBootstrap:
     """
@@ -114,6 +119,7 @@ class ApplicationBootstrap:
             memory,
         )
         power_service = WindowsPowerService()
+        process_service = WindowsProcessService()
         confirmation_manager = ConfirmationManager()
 
         intent_resolver = IntentResolver()
@@ -154,7 +160,9 @@ class ApplicationBootstrap:
             path_scanner,
         )
 
-        application_launcher = ApplicationLauncher()
+        application_launcher = ApplicationLauncher(
+            process_service,
+        )
         application_search_engine = (
             ApplicationSearchEngine()
         )
@@ -349,6 +357,10 @@ class ApplicationBootstrap:
         self._container.register(
             PowerService,
             power_service,
+        )
+        self._container.register(
+            ProcessService,
+            process_service,
         )
 
         kernel.modules.register(

@@ -4,17 +4,20 @@ Application launcher.
 
 from __future__ import annotations
 
-import os
-import subprocess
 
 from jarvis.applications.application import Application
 from jarvis.applications.method import LaunchMethod
-
+from jarvis.services.process import ProcessService
 
 class ApplicationLauncher:
     """
     Launches applications.
     """
+    def __init__(
+        self,
+        process_service: ProcessService,
+    ) -> None:
+        self._process_service = process_service
 
     def launch(
         self,
@@ -27,12 +30,12 @@ class ApplicationLauncher:
         match application.launch_method:
 
             case LaunchMethod.EXECUTABLE:
-                subprocess.Popen(
-                    [application.target],
+                self._process_service.launch(
+                    application.target,
                 )
 
             case LaunchMethod.URI:
-                os.startfile(
+                self._process_service.launch(
                     application.target,
                 )
 

@@ -3,7 +3,6 @@ Defines the Action model.
 """
 
 from dataclasses import dataclass
-from typing import Any
 
 
 @dataclass(frozen=True, slots=True)
@@ -14,4 +13,4 @@ class Action:
 
     name: str
     target: str | None = None
-    data: Any = None
+    requires_confirmation: bool = False

@@ -19,7 +19,7 @@ class PendingAction:
     title: str
     message: str
 
-    callback: Callable[..., Any]
+    payload: Any
 
     created_at: datetime
     expires_at: datetime

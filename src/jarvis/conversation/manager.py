@@ -47,13 +47,8 @@ class ConversationManager:
         self._intent_resolver = intent_resolver
         self._action_builder = action_builder
         self._action_engine = action_engine
-        self._conversation_session = (
-            conversation_session
-        )
-        self._application_launcher = (
-            application_launcher
-        )
-
+        self._conversation_session = conversation_session
+        self._application_launcher = application_launcher
 
     def handle(
         self,
@@ -63,14 +58,38 @@ class ConversationManager:
         """
         Handle parsed user input.
         """
-        
+
+        message = " ".join(
+            [command, *args],
+        ).strip().lower()
+
+        if self._action_engine.confirmation.has_pending():
+
+            if message in {
+                "yes",
+                "y",
+                "confirm",
+                "ok",
+                "okay",
+            }:
+                return self._action_engine.execute_pending()
+
+            if message in {
+                "no",
+                "n",
+                "cancel",
+                "exit",
+            }:
+                self._action_engine.confirmation.cancel()
+
+                return Response(
+                    text="Cancelled.",
+                    status=ResponseStatus.SUCCESS,
+                )
+
         if (
             self._conversation_session.waiting_for_application
         ):
-            message = " ".join(
-                [command, *args],
-            ).strip().lower()
-
             matches = (
                 self._conversation_session.pending_applications
             )
@@ -184,10 +203,8 @@ class ConversationManager:
             if response is not None:
                 return response
 
-        message = " ".join(
-            [command, *args],
-        ).strip()
-
         return self._ai_service.chat(
-            message,
+            " ".join(
+                [command, *args],
+            ).strip(),
         )

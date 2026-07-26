@@ -7,6 +7,8 @@ from __future__ import annotations
 from jarvis.actions.action import Action
 from jarvis.actions.executor import ActionExecutor
 from jarvis.responses import Response
+from jarvis.confirmation.manager import ConfirmationManager
+from jarvis.responses import Response
 
 
 class ActionEngine:
@@ -14,11 +16,14 @@ class ActionEngine:
     Coordinates the execution of actions.
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        confirmation: ConfirmationManager
+    ) -> None:
         """
         Initialize the action engine.
         """
-
+        self._confirmation = confirmation
         self._executors: list[ActionExecutor] = []
 
     def register(
@@ -42,14 +47,49 @@ class ActionEngine:
         """
 
         for executor in self._executors:
-            if executor.supports(
-                action,
-            ):
-                return executor.execute(
-                    action,
+            if not executor.supports(action):
+                continue
+
+            if action.requires_confirmation:
+                self._confirmation.request(
+                    title=action.name.title(),
+                    message=f"Confirm '{action.name}' action.",
+                    payload=action,
                 )
-                
+
+                return Response(
+                    text=f"Please confirm the '{action.name}' action.",
+                )
+
+            return executor.execute(action)
 
         raise NotImplementedError(
             f"I don't know how to execute the '{action.name}' action yet."
         )
+
+    def execute_pending(
+        self,
+    ) -> Response:
+        """
+        Execute the currently confirmed pending action.
+        """
+
+        action = self._confirmation.confirm()
+
+        action = Action(
+            name=action.name,
+            target=action.target,
+            requires_confirmation=False,
+        )
+
+        return self.execute(
+            action,
+        )
+
+    @property
+    def confirmation(self) -> ConfirmationManager:
+        """
+        Return the confirmation manager.
+        """
+
+        return self._confirmation

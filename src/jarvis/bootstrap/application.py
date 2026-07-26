@@ -29,6 +29,7 @@ from jarvis.actions import (
 from jarvis.actions.executors import (
     EchoActionExecutor,
     OpenApplicationExecutor,
+    SystemActionExecutor,
 )
 from jarvis.applications import (
     ApplicationAliasGenerator,
@@ -56,6 +57,7 @@ from jarvis.applications.store.indexes import (
     AliasIndex,
     SourceIndex,
 )
+from jarvis.confirmation import ConfirmationManager
 
 
 class ApplicationBootstrap:
@@ -105,8 +107,14 @@ class ApplicationBootstrap:
             provider,
             memory,
         )
+        confirmation_manager = ConfirmationManager()
+
         intent_resolver = IntentResolver()
-        action_engine = ActionEngine()
+
+        action_engine = ActionEngine(
+            confirmation=confirmation_manager,
+        )
+
         action_builder = ActionBuilder()
         application_alias_generator = ApplicationAliasGenerator()
 
@@ -168,6 +176,9 @@ class ApplicationBootstrap:
                 application_store,
                 application_launcher,
             ),
+        )
+        action_engine.register(
+            SystemActionExecutor(),
         )
 
 
@@ -244,6 +255,11 @@ class ApplicationBootstrap:
         self._container.register(
             ActionEngine,
             action_engine,
+        )
+
+        self._container.register(
+            ConfirmationManager,
+            confirmation_manager,
         )
 
         self._container.register(

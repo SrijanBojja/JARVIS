@@ -20,13 +20,26 @@ class ActionBuilder:
         Build an action from an intent.
         """
 
-        if intent.name != "open":
-            return None
+        if intent.name == "open":
+            if not args:
+                return None
 
-        if not args:
-            return None
+            return Action(
+                name="open",
+                target=" ".join(args),
+                requires_confirmation=False,
+            )
 
-        return Action(
-            name="open",
-            target=" ".join(args),
-        )
+        if intent.name in {
+            "shutdown",
+            "restart",
+            "sleep",
+            "hibernate",
+            "logout",
+        }:
+            return Action(
+                name=intent.name,
+                requires_confirmation=True,
+            )
+
+        return None

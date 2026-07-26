@@ -31,7 +31,7 @@ class ConfirmationManager:
         self,
         title: str,
         message: str,
-        callback,
+        payload,
         timeout: int = 30,
     ) -> PendingAction:
         """
@@ -49,14 +49,14 @@ class ConfirmationManager:
             action_id=str(uuid4()),
             title=title,
             message=message,
-            callback=callback,
+            payload=payload,
             created_at=now,
             expires_at=now + timedelta(seconds=timeout),
         )
 
         return self._pending
 
-    def confirm(self) -> None:
+    def confirm(self):
         """
         Confirms and executes the pending action.
         """
@@ -70,11 +70,11 @@ class ConfirmationManager:
                 "Pending action has expired.",
             )
 
-        callback = pending.callback
+        payload = pending.payload
 
         self.clear()
 
-        callback()
+        return payload
 
     def cancel(self) -> None:
         """

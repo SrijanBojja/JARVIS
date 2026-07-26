@@ -4,8 +4,6 @@ System action executor.
 
 from __future__ import annotations
 
-import os
-
 from jarvis.actions import (
     Action,
     ActionExecutor,
@@ -14,12 +12,19 @@ from jarvis.responses import (
     Response,
     ResponseStatus,
 )
+from jarvis.services.power.service import PowerService
 
 
 class SystemActionExecutor(ActionExecutor):
     """
-    Executes Windows system actions.
+    Executes operating system power actions.
     """
+
+    def __init__(
+        self,
+        power_service: PowerService,
+    ) -> None:
+        self._power_service = power_service
 
     def supports(
         self,
@@ -41,21 +46,19 @@ class SystemActionExecutor(ActionExecutor):
         match action.name:
 
             case "shutdown":
-                os.system("shutdown /s /t 0")
+                self._power_service.shutdown()
 
             case "restart":
-                os.system("shutdown /r /t 0")
+                self._power_service.restart()
 
             case "sleep":
-                os.system(
-                    "rundll32.exe powrprof.dll,SetSuspendState Sleep"
-                )
+                self._power_service.sleep()
 
             case "hibernate":
-                os.system("shutdown /h")
+                self._power_service.hibernate()
 
             case "logout":
-                os.system("shutdown /l")
+                self._power_service.logout()
 
         return Response(
             text=f"Executing {action.name}...",

@@ -58,6 +58,12 @@ from jarvis.applications.store.indexes import (
     SourceIndex,
 )
 from jarvis.confirmation import ConfirmationManager
+from jarvis.services.power.service import (
+    PowerService,
+)
+from jarvis.services.power.windows import (
+    WindowsPowerService,
+)
 
 
 class ApplicationBootstrap:
@@ -107,6 +113,7 @@ class ApplicationBootstrap:
             provider,
             memory,
         )
+        power_service = WindowsPowerService()
         confirmation_manager = ConfirmationManager()
 
         intent_resolver = IntentResolver()
@@ -178,7 +185,9 @@ class ApplicationBootstrap:
             ),
         )
         action_engine.register(
-            SystemActionExecutor(),
+            SystemActionExecutor(
+                power_service,
+            ),
         )
 
 
@@ -335,6 +344,11 @@ class ApplicationBootstrap:
         self._container.register(
             VoiceAssistant,
             voice_assistant,
+        )
+
+        self._container.register(
+            PowerService,
+            power_service,
         )
 
         kernel.modules.register(

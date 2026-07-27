@@ -55,3 +55,15 @@ class ApplicationLauncher:
         self._process_service.terminate(
             application.target,
         )
+
+    def is_running(
+        self,
+        application: Application,
+    ) -> bool:
+        """
+        Check whether an application is running.
+        """
+
+        return self._process_service.is_running(
+            application.target,
+        )

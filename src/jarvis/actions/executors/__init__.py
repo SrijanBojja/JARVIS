@@ -6,6 +6,7 @@ from .clipboard import ClipboardActionExecutor
 from .filesystem import FileSystemActionExecutor
 from .notification import NotificationActionExecutor
 from .close_application import CloseApplicationExecutor
+from .check_application import CheckApplicationExecutor
 
 __all__ = [
     "EchoActionExecutor",
@@ -15,4 +16,5 @@ __all__ = [
     "FileSystemActionExecutor",
     "NotificationActionExecutor",
     "CloseApplicationExecutor",
+    "CheckApplicationExecutor",
 ]

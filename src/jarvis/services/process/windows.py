@@ -31,10 +31,13 @@ class WindowsProcessService(ProcessService):
                 f"Unable to launch '{target}'."
             ) from exc
 
-    def is_running(self, process_name: str) -> bool:
+    def is_running(self, target: str) -> bool:
         """
-        Return True if the process is running.
+        Return True if the application is running.
         """
+
+        process_name = Path(target).name.lower()
+
         result = subprocess.run(
             ["tasklist"],
             capture_output=True,
@@ -42,7 +45,7 @@ class WindowsProcessService(ProcessService):
             check=True,
         )
 
-        return process_name.lower() in result.stdout.lower()
+        return process_name in result.stdout.lower()
 
     def terminate(self, target: str) -> None:
         """

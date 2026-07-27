@@ -30,6 +30,7 @@ from jarvis.actions.executors import (
     EchoActionExecutor,
     OpenApplicationExecutor,
     CloseApplicationExecutor,
+    CheckApplicationExecutor,
     SystemActionExecutor,
 )
 from jarvis.applications import (
@@ -218,6 +219,13 @@ class ApplicationBootstrap:
 
         action_engine.register(
             CloseApplicationExecutor(
+                application_search_engine,
+                application_store,
+                application_launcher,
+            ),
+        )
+        action_engine.register(
+            CheckApplicationExecutor(
                 application_search_engine,
                 application_store,
                 application_launcher,

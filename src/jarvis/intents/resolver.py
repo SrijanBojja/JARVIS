@@ -51,6 +51,20 @@ class IntentResolver:
                 confidence=1.0,
             )
 
+        # ---------- Check ----------
+        if (
+            command == "is"
+            and len(args) >= 2
+            and args[-1].lower() in {
+                "open",
+                "running",
+            }
+        ):
+            return Intent(
+                name="check",
+                confidence=1.0,
+            )
+
         # ---------- Clipboard ----------
         if command == "clipboard":
             return Intent(

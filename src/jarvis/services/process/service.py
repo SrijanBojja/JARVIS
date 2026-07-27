@@ -21,7 +21,7 @@ class ProcessService(Service, ABC):
         """
 
     @abstractmethod
-    def is_running(self, process_name: str) -> bool:
+    def is_running(self, target: str) -> bool:
         """
         Return True if the process is running.
         """

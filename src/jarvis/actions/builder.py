@@ -23,13 +23,14 @@ class ActionBuilder:
         if intent.name in {
             "open",
             "close",
+            "check",
         }:
             if not args:
                 return None
 
             return Action(
                 name=intent.name,
-                target=" ".join(args),
+                target=" ".join(args[:-1]) if intent.name == "check" else " ".join(args),
                 requires_confirmation=False,
             )
 

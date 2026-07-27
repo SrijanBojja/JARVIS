@@ -51,6 +51,18 @@ class IntentResolver:
                 confidence=1.0,
             )
 
+        # ---------- Window ----------
+        if command in {
+            "focus",
+            "minimize",
+            "maximize",
+            "restore",
+        }:
+            return Intent(
+                name=command,
+                confidence=1.0,
+            )
+
         # ---------- Check ----------
         if (
             command == "is"

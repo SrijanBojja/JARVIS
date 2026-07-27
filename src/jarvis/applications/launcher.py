@@ -8,6 +8,7 @@ from __future__ import annotations
 from jarvis.applications.application import Application
 from jarvis.applications.method import LaunchMethod
 from jarvis.services.process import ProcessService
+from jarvis.services.window import WindowService
 
 class ApplicationLauncher:
     """
@@ -16,8 +17,10 @@ class ApplicationLauncher:
     def __init__(
         self,
         process_service: ProcessService,
+        window_service: WindowService,
     ) -> None:
         self._process_service = process_service
+        self._window_service = window_service
 
     def launch(
         self,
@@ -73,5 +76,56 @@ class ApplicationLauncher:
         """
 
         return self._process_service.is_running(
+            application.target,
+        )
+
+    def focus(
+        self,
+        application: Application,
+    ) -> None:
+        """
+        Focus an application's window.
+        """
+
+        self._window_service.focus(
+            application.target,
+        )
+
+
+    def minimize(
+        self,
+        application: Application,
+    ) -> None:
+        """
+        Minimize an application's window.
+        """
+
+        self._window_service.minimize(
+            application.target,
+        )
+
+
+    def maximize(
+        self,
+        application: Application,
+    ) -> None:
+        """
+        Maximize an application's window.
+        """
+
+        self._window_service.maximize(
+            application.target,
+        )
+
+
+    def restore(
+        self,
+        application: Application,
+    ) -> None:
+        """
+        Restore an application's window.
+        """
+
+        self._window_service.restore(
             application.target,
         )

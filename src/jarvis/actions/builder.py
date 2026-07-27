@@ -24,6 +24,10 @@ class ActionBuilder:
             "open",
             "close",
             "check",
+            "focus",
+            "minimize",
+            "maximize",
+            "restore",
         }:
             if not args:
                 return None

@@ -26,6 +26,11 @@ from jarvis.actions import (
     ActionBuilder,
     ActionEngine,
 )
+from jarvis.workflows import (
+    WorkflowBuilder,
+    WorkflowManager,
+    WorkflowRunner,
+)
 from jarvis.actions.executors import (
     EchoActionExecutor,
     OpenApplicationExecutor,
@@ -90,7 +95,14 @@ from jarvis.services.notification import (
     NotificationService,
     WindowsNotificationService,
 )
-from jarvis.actions.executors import NotificationActionExecutor
+from jarvis.actions.executors import (
+    NotificationActionExecutor,
+    WindowApplicationExecutor,
+)
+from jarvis.services.window import (
+    WindowService,
+    WindowsWindowService,
+)
 
 class ApplicationBootstrap:
     """
@@ -141,6 +153,7 @@ class ApplicationBootstrap:
         )
         power_service = WindowsPowerService()
         process_service = WindowsProcessService()
+        window_service = WindowsWindowService()
         clipboard_service = WindowsClipboardService()
         filesystem_service = WindowsFileSystemService()
         notification_service = WindowsNotificationService()
@@ -153,6 +166,18 @@ class ApplicationBootstrap:
         )
 
         action_builder = ActionBuilder()
+
+        workflow_manager = WorkflowManager()
+
+        workflow_builder = WorkflowBuilder(
+            action_builder,
+        )
+
+        workflow_runner = WorkflowRunner(
+            workflow_manager,
+            action_engine,
+        )
+
         application_alias_generator = ApplicationAliasGenerator()
 
         name_index = NameIndex()
@@ -186,6 +211,7 @@ class ApplicationBootstrap:
 
         application_launcher = ApplicationLauncher(
             process_service,
+            window_service,
         )
         application_search_engine = (
             ApplicationSearchEngine()
@@ -231,6 +257,13 @@ class ApplicationBootstrap:
                 application_launcher,
             ),
         )
+        action_engine.register(
+            WindowApplicationExecutor(
+                application_search_engine,
+                application_store,
+                application_launcher,
+            ),
+        )
 
         action_engine.register(
             SystemActionExecutor(
@@ -258,8 +291,8 @@ class ApplicationBootstrap:
             skill_module,
             ai_service,
             intent_resolver,
-            action_builder,
-            action_engine,
+            workflow_builder,
+            workflow_runner,
             conversation_session,
             application_launcher,
         )
@@ -339,6 +372,21 @@ class ApplicationBootstrap:
         )
 
         self._container.register(
+            WorkflowManager,
+            workflow_manager,
+        )
+
+        self._container.register(
+            WorkflowBuilder,
+            workflow_builder,
+        )
+
+        self._container.register(
+            WorkflowRunner,
+            workflow_runner,
+        )
+
+        self._container.register(
             ApplicationStore,
             application_store,
         )
@@ -415,6 +463,10 @@ class ApplicationBootstrap:
         self._container.register(
             ProcessService,
             process_service,
+        )
+        self._container.register(
+            WindowService,
+            window_service,
         )
         self._container.register(
             ClipboardService,

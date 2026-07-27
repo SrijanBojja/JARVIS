@@ -8,16 +8,16 @@ from jarvis.ai import AIService
 from jarvis.applications import ApplicationLauncher
 from jarvis.commands.exceptions import CommandNotFoundError
 from jarvis.commands.module import CommandModule
-from jarvis.actions import (
-    ActionBuilder,
-    ActionEngine,
-)
 from jarvis.intents import IntentResolver
 from jarvis.responses import (
     Response,
     ResponseStatus,
 )
 from jarvis.skills.module import SkillModule
+from jarvis.workflows import (
+    WorkflowBuilder,
+    WorkflowRunner,
+)
 from .session import ConversationSession
 
 
@@ -32,21 +32,18 @@ class ConversationManager:
         skill_module: SkillModule,
         ai_service: AIService,
         intent_resolver: IntentResolver,
-        action_builder: ActionBuilder,
-        action_engine: ActionEngine,
+        workflow_builder: WorkflowBuilder,
+        workflow_runner: WorkflowRunner,
         conversation_session: ConversationSession,
         application_launcher: ApplicationLauncher,
     ) -> None:
-        """
-        Initialize the conversation manager.
-        """
 
         self._command_module = command_module
         self._skill_module = skill_module
         self._ai_service = ai_service
         self._intent_resolver = intent_resolver
-        self._action_builder = action_builder
-        self._action_engine = action_engine
+        self._workflow_builder = workflow_builder
+        self._workflow_runner = workflow_runner
         self._conversation_session = conversation_session
         self._application_launcher = application_launcher
 
@@ -55,15 +52,16 @@ class ConversationManager:
         command: str,
         args: list[str],
     ) -> Response | None:
-        """
-        Handle parsed user input.
-        """
 
         message = " ".join(
             [command, *args],
         ).strip().lower()
 
-        if self._action_engine.confirmation.has_pending():
+        #
+        # Pending confirmation.
+        #
+
+        if self._workflow_runner.has_pending_confirmation():
 
             if message in {
                 "yes",
@@ -72,7 +70,7 @@ class ConversationManager:
                 "ok",
                 "okay",
             }:
-                return self._action_engine.execute_pending()
+                return self._workflow_runner.execute_pending()
 
             if message in {
                 "no",
@@ -80,16 +78,19 @@ class ConversationManager:
                 "cancel",
                 "exit",
             }:
-                self._action_engine.confirmation.cancel()
+                self._workflow_runner.cancel_pending()
 
                 return Response(
                     text="Cancelled.",
                     status=ResponseStatus.SUCCESS,
                 )
 
-        if (
-            self._conversation_session.waiting_for_application
-        ):
+        #
+        # Waiting for application selection.
+        #
+
+        if self._conversation_session.waiting_for_application:
+
             matches = (
                 self._conversation_session.pending_applications
             )
@@ -161,7 +162,7 @@ class ConversationManager:
                 )
 
         #
-        # Resolve simple conversational references.
+        # Resolve conversational references.
         #
 
         if args:
@@ -216,32 +217,32 @@ class ConversationManager:
             args,
         )
 
-        action = self._action_builder.build(
+        workflow = self._workflow_builder.build(
             intent,
             args,
         )
 
-        if action is not None:
+        if workflow is not None:
 
-            response = self._action_engine.execute(
-                action,
+            result = self._workflow_runner.execute(
+                workflow,
             )
 
-            if (
-                response.status
-                == ResponseStatus.AMBIGUOUS
-            ):
-                self._conversation_session.pending_applications = (
-                    response.data
-                )
-            else:
-                self._conversation_session.clear()
+            if result.responses:
 
-                self._conversation_session.remember(
-                    action,
-                    response,
-                )
-            return response
+                response = result.responses[-1]
+
+                if (
+                    response.status
+                    == ResponseStatus.AMBIGUOUS
+                ):
+                    self._conversation_session.pending_applications = (
+                        response.data
+                    )
+                else:
+                    self._conversation_session.clear()
+
+                return response
 
         try:
             return self._command_module.execute(
@@ -264,7 +265,3 @@ class ConversationManager:
                 [command, *args],
             ).strip(),
         )
-
-        print(f"DEBUG: command={command!r}")
-        print(f"DEBUG: args={args!r}")
-        print(f"DEBUG: message={message!r}")

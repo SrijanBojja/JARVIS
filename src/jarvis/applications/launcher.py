@@ -22,10 +22,16 @@ class ApplicationLauncher:
     def launch(
         self,
         application: Application,
-    ) -> None:
+    ) -> bool:
         """
         Launch an application.
+
+        Returns True if the application was launched.
+        Returns False if it is already running.
         """
+
+        if self.is_running(application):
+            return False
 
         match application.launch_method:
 
@@ -44,6 +50,8 @@ class ApplicationLauncher:
                     f"Unsupported launch method: "
                     f"{application.launch_method}"
                 )
+
+        return True
     def close(
         self,
         application: Application,

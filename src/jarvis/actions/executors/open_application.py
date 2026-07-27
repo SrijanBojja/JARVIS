@@ -98,11 +98,21 @@ class OpenApplicationExecutor(ActionExecutor):
             response.best_match.application
         )
 
-        self._launcher.launch(
+        application = (
+            response.best_match.application
+        )
+
+        opened = self._launcher.launch(
             application,
         )
 
+        if opened:
+            return Response(
+                text=f"Opening {application.name}...",
+                status=ResponseStatus.SUCCESS,
+            )
+
         return Response(
-            text=f"Opening {application.name}...",
+            text=f"{application.name} is already running.",
             status=ResponseStatus.SUCCESS,
         )

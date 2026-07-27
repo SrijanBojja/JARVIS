@@ -36,10 +36,34 @@ class ActionBuilder:
             "sleep",
             "hibernate",
             "logout",
+            "notify"
         }:
             return Action(
                 name=intent.name,
                 requires_confirmation=True,
+            )
+
+        if intent.name == "clipboard_read":
+            return Action(
+                name="clipboard_read",
+            )
+
+        if intent.name == "clipboard_clear":
+            return Action(
+                name="clipboard_clear",
+            )
+
+        if intent.name in {
+            "read_file",
+            "write_file",
+            "list_directory",
+            "create_directory",
+            "delete_file",
+            "delete_directory",
+            "move_file",
+        }:
+            return Action(
+                name=intent.name,
             )
 
         return None

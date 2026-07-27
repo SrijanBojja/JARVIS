@@ -70,6 +70,25 @@ from jarvis.services.process.service import (
 from jarvis.services.process.windows import (
     WindowsProcessService,
 )
+from jarvis.services.clipboard import (
+    ClipboardService,
+    WindowsClipboardService,
+)
+from jarvis.actions.executors import (
+    ClipboardActionExecutor,
+)
+from jarvis.services.filesystem import (
+    FileSystemService,
+    WindowsFileSystemService,
+)
+from jarvis.actions.executors import (
+    FileSystemActionExecutor,
+)
+from jarvis.services.notification import (
+    NotificationService,
+    WindowsNotificationService,
+)
+from jarvis.actions.executors import NotificationActionExecutor
 
 class ApplicationBootstrap:
     """
@@ -120,6 +139,9 @@ class ApplicationBootstrap:
         )
         power_service = WindowsPowerService()
         process_service = WindowsProcessService()
+        clipboard_service = WindowsClipboardService()
+        filesystem_service = WindowsFileSystemService()
+        notification_service = WindowsNotificationService()
         confirmation_manager = ConfirmationManager()
 
         intent_resolver = IntentResolver()
@@ -197,7 +219,21 @@ class ApplicationBootstrap:
                 power_service,
             ),
         )
-
+        action_engine.register(
+            ClipboardActionExecutor(
+                clipboard_service,
+            ),
+        )
+        action_engine.register(
+            FileSystemActionExecutor(
+                filesystem_service,
+            ),
+        )
+        action_engine.register(
+            NotificationActionExecutor(
+                notification_service,
+            ),
+        )
 
         conversation_manager = ConversationManager(
             command_module,
@@ -361,6 +397,18 @@ class ApplicationBootstrap:
         self._container.register(
             ProcessService,
             process_service,
+        )
+        self._container.register(
+            ClipboardService,
+            clipboard_service,
+        )
+        self._container.register(
+            FileSystemService,
+            filesystem_service,
+        )
+        self._container.register(
+            NotificationService,
+            notification_service,
         )
 
         kernel.modules.register(

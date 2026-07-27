@@ -162,6 +162,7 @@ class ConversationManager:
 
         intent = self._intent_resolver.resolve(
             command,
+            args,
         )
 
         action = self._action_builder.build(
@@ -208,3 +209,7 @@ class ConversationManager:
                 [command, *args],
             ).strip(),
         )
+
+        print(f"DEBUG: command={command!r}")
+        print(f"DEBUG: args={args!r}")
+        print(f"DEBUG: message={message!r}")

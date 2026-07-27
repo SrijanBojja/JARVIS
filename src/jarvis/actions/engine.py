@@ -8,8 +8,7 @@ from jarvis.actions.action import Action
 from jarvis.actions.executor import ActionExecutor
 from jarvis.responses import Response
 from jarvis.confirmation.manager import ConfirmationManager
-from jarvis.responses import Response
-
+from jarvis.confirmation.exceptions import PendingActionError
 
 class ActionEngine:
     """
@@ -51,15 +50,24 @@ class ActionEngine:
                 continue
 
             if action.requires_confirmation:
-                self._confirmation.request(
-                    title=action.name.title(),
-                    message=f"Confirm '{action.name}' action.",
-                    payload=action,
-                )
+                try:
+                    self._confirmation.request(
+                        title=action.name.title(),
+                        message=f"Confirm '{action.name}' action.",
+                        payload=action,
+                    )
 
-                return Response(
-                    text=f"Please confirm the '{action.name}' action.",
-                )
+                    return Response(
+                        text=f"Please confirm the '{action.name}' action.",
+                    )
+
+                except PendingActionError:
+                    return Response(
+                        text=(
+                            "A confirmation is already pending.\n"
+                            "Reply with 'yes' or 'no'."
+                        ),
+                    )
 
             return executor.execute(action)
 

@@ -76,6 +76,12 @@ class IntentResolver:
                 confidence=1.0,
             )
 
+        if command == "list" and first_arg == "directory":
+            return Intent(
+                name="list_directory",
+                confidence=1.0,
+            )
+
         if command == "delete" and first_arg == "file":
             return Intent(
                 name="delete_file",

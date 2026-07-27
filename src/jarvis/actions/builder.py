@@ -62,8 +62,23 @@ class ActionBuilder:
             "delete_directory",
             "move_file",
         }:
+
+            filesystem_args = args
+
+            if filesystem_args:
+                first = filesystem_args[0].lower()
+
+                if first in {
+                    "file",
+                    "directory",
+                }:
+                    filesystem_args = filesystem_args[1:]
+
             return Action(
                 name=intent.name,
+                target=" ".join(filesystem_args)
+                if filesystem_args
+                else None,
             )
 
         return None

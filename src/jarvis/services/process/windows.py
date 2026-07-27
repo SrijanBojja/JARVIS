@@ -3,7 +3,7 @@ Windows process service.
 """
 
 from __future__ import annotations
-
+from pathlib import Path
 import os
 import subprocess
 
@@ -44,18 +44,28 @@ class WindowsProcessService(ProcessService):
 
         return process_name.lower() in result.stdout.lower()
 
-    def terminate(self, process_name: str) -> None:
+    def terminate(self, target: str) -> None:
         """
-        Terminate a running process.
+        Terminate a running application.
         """
+
+        process_name = Path(target).name
+
         try:
             subprocess.run(
-                ["taskkill", "/IM", process_name, "/F"],
+                [
+                    "taskkill",
+                    "/IM",
+                    process_name,
+                    "/F",
+                ],
                 check=True,
                 capture_output=True,
                 text=True,
             )
+
         except subprocess.CalledProcessError as exc:
+
             if "not found" in exc.stderr.lower():
                 raise ProcessNotFoundError(
                     f"Process '{process_name}' is not running."

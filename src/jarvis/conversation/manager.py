@@ -160,6 +160,57 @@ class ConversationManager:
                     ),
                 )
 
+        #
+        # Resolve simple conversational references.
+        #
+
+        if args:
+
+            resolved_args = args.copy()
+
+            if resolved_args[-1].lower() == "it":
+
+                if command == "close":
+                    if (
+                        self._conversation_session.last_application
+                        is not None
+                    ):
+                        resolved_args[-1] = (
+                            self._conversation_session.last_application
+                        )
+
+                elif (
+                    command == "delete"
+                    and len(resolved_args) >= 2
+                ):
+                    kind = resolved_args[0].lower()
+
+                    if (
+                        kind == "file"
+                        and self._conversation_session.last_file
+                    ):
+                        resolved_args[-1] = (
+                            self._conversation_session.last_file
+                        )
+
+                    elif (
+                        kind == "directory"
+                        and self._conversation_session.last_directory
+                    ):
+                        resolved_args[-1] = (
+                            self._conversation_session.last_directory
+                        )
+
+                elif command == "open":
+                    if (
+                        self._conversation_session.last_directory
+                    ):
+                        resolved_args[-1] = (
+                            self._conversation_session.last_directory
+                        )
+
+            args = resolved_args
+
         intent = self._intent_resolver.resolve(
             command,
             args,
@@ -186,6 +237,10 @@ class ConversationManager:
             else:
                 self._conversation_session.clear()
 
+                self._conversation_session.remember(
+                    action,
+                    response,
+                )
             return response
 
         try:

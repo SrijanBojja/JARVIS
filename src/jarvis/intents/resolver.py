@@ -41,6 +41,16 @@ class IntentResolver:
                 confidence=1.0,
             )
 
+        # ---------- Close ----------
+        if command in {
+            "close",
+            "terminate",
+        }:
+            return Intent(
+                name="close",
+                confidence=1.0,
+            )
+
         # ---------- Clipboard ----------
         if command == "clipboard":
             return Intent(

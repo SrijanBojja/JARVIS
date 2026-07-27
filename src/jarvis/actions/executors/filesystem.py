@@ -135,11 +135,11 @@ class FileSystemActionExecutor(ActionExecutor):
 
             return Response(
                 text=f"Unsupported filesystem action: {action.name}",
-                status=ResponseStatus.ERROR,
+                status=ResponseStatus.FAILED,
             )
 
         except Exception as exc:
             return Response(
                 text=str(exc),
-                status=ResponseStatus.ERROR,
+                status=ResponseStatus.FAILED,
             )

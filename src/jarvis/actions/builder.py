@@ -20,12 +20,15 @@ class ActionBuilder:
         Build an action from an intent.
         """
 
-        if intent.name == "open":
+        if intent.name in {
+            "open",
+            "close",
+        }:
             if not args:
                 return None
 
             return Action(
-                name="open",
+                name=intent.name,
                 target=" ".join(args),
                 requires_confirmation=False,
             )

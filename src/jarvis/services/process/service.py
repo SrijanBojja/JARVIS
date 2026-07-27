@@ -27,7 +27,7 @@ class ProcessService(Service, ABC):
         """
 
     @abstractmethod
-    def terminate(self, process_name: str) -> None:
+    def terminate(self, target: str) -> None:
         """
-        Terminate a running process.
+        Terminate a running application.
         """

@@ -44,3 +44,14 @@ class ApplicationLauncher:
                     f"Unsupported launch method: "
                     f"{application.launch_method}"
                 )
+    def close(
+        self,
+        application: Application,
+    ) -> None:
+        """
+        Close an application.
+        """
+
+        self._process_service.terminate(
+            application.target,
+        )

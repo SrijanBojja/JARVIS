@@ -2,31 +2,31 @@
 Speaker implementation.
 """
 
-from __future__ import annotations
-
-import pyttsx3
+from jarvis.voice.engines.base import SpeechEngine
+from jarvis.voice.engines.piper_engine import PiperEngine
 
 
 class Speaker:
     """
-    Speaks text aloud.
+    High-level speech interface.
     """
 
-    def __init__(self) -> None:
-        self._engine = pyttsx3.init()
+    def __init__(
+        self,
+        engine: SpeechEngine | None = None,
+    ) -> None:
+        """
+        Initialize the speaker.
+        """
 
-        self._engine.setProperty("rate", 180)
-        self._engine.setProperty("volume", 1.0)
+        self._engine = engine or PiperEngine()
 
     def speak(
         self,
         text: str,
     ) -> None:
         """
-        Speak text aloud.
+        Speak the given text.
         """
 
-        print(f"JARVIS: {text}")
-
-        self._engine.say(text)
-        self._engine.runAndWait()
+        self._engine.speak(text)

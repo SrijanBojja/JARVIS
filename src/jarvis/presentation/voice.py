@@ -28,9 +28,6 @@ class VoicePresenter(Presenter):
         self,
         response: Response,
     ) -> None:
-        """
-        Speak a response.
-        """
 
         self._voice_module.speak(
             response.text,

@@ -65,9 +65,8 @@ class Shell:
                 )
 
                 if response is not None:
-                    self._presentation_pipeline.present(
-                        response,
-                    )
+                    self._presentation_pipeline.present(response)
+
 
                 else:
                     print(f"Unknown command: {command}")

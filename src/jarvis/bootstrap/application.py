@@ -156,6 +156,11 @@ class ApplicationBootstrap:
         shell_pipeline.register(
             TerminalPresenter(),
         )
+        shell_pipeline.register(
+            VoicePresenter(
+                voice_module,
+            ),
+        )
 
         voice_pipeline.register(
             TerminalPresenter(),

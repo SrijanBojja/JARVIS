@@ -18,6 +18,8 @@ class Settings:
     project_root: Path
     data_dir: Path
     logs_dir: Path
+    voice_engine: str
+    voice_model: str
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -29,4 +31,6 @@ settings = Settings(
     project_root=PROJECT_ROOT,
     data_dir=PROJECT_ROOT / "data",
     logs_dir=PROJECT_ROOT / "logs",
+    voice_engine="piper",
+    voice_model="en_US-lessac-medium",
 )

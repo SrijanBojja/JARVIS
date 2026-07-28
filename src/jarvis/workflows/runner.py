@@ -12,7 +12,7 @@ from .result import WorkflowResult
 from .state import WorkflowState
 from .step_state import WorkflowStepState
 from .workflow import Workflow
-
+from jarvis.actions import Action
 
 class WorkflowRunner:
     """
@@ -67,6 +67,7 @@ class WorkflowRunner:
         )
 
         responses: list[Response] = []
+        executed_actions: list[Action] = []
 
         for index, step in enumerate(
             workflow.steps,
@@ -81,6 +82,10 @@ class WorkflowRunner:
 
             responses.append(
                 response,
+            )
+
+            executed_actions.append(
+                step.action,
             )
 
             if (
@@ -99,6 +104,7 @@ class WorkflowRunner:
                     workflow_id=workflow.id,
                     status=WorkflowState.FAILED,
                     responses=responses,
+                    executed_actions=executed_actions,
                     completed_steps=index,
                     failed_step=index,
                 )
@@ -117,6 +123,7 @@ class WorkflowRunner:
             workflow_id=workflow.id,
             status=WorkflowState.COMPLETED,
             responses=responses,
+            executed_actions=executed_actions,
             completed_steps=len(
                 workflow.steps,
             ),

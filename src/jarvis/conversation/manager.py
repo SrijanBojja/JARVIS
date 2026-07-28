@@ -19,7 +19,7 @@ from jarvis.workflows import (
     WorkflowRunner,
 )
 from .session import ConversationSession
-
+from .resolver import ReferenceResolver
 
 class ConversationManager:
     """
@@ -35,6 +35,7 @@ class ConversationManager:
         workflow_builder: WorkflowBuilder,
         workflow_runner: WorkflowRunner,
         conversation_session: ConversationSession,
+        reference_resolver: ReferenceResolver,
         application_launcher: ApplicationLauncher,
     ) -> None:
 
@@ -45,6 +46,7 @@ class ConversationManager:
         self._workflow_builder = workflow_builder
         self._workflow_runner = workflow_runner
         self._conversation_session = conversation_session
+        self._reference_resolver = reference_resolver
         self._application_launcher = application_launcher
 
     def handle(
@@ -165,52 +167,10 @@ class ConversationManager:
         # Resolve conversational references.
         #
 
-        if args:
-
-            resolved_args = args.copy()
-
-            if resolved_args[-1].lower() == "it":
-
-                if command == "close":
-                    if (
-                        self._conversation_session.last_application
-                        is not None
-                    ):
-                        resolved_args[-1] = (
-                            self._conversation_session.last_application
-                        )
-
-                elif (
-                    command == "delete"
-                    and len(resolved_args) >= 2
-                ):
-                    kind = resolved_args[0].lower()
-
-                    if (
-                        kind == "file"
-                        and self._conversation_session.last_file
-                    ):
-                        resolved_args[-1] = (
-                            self._conversation_session.last_file
-                        )
-
-                    elif (
-                        kind == "directory"
-                        and self._conversation_session.last_directory
-                    ):
-                        resolved_args[-1] = (
-                            self._conversation_session.last_directory
-                        )
-
-                elif command == "open":
-                    if (
-                        self._conversation_session.last_directory
-                    ):
-                        resolved_args[-1] = (
-                            self._conversation_session.last_directory
-                        )
-
-            args = resolved_args
+        args = self._reference_resolver.resolve(
+            command,
+            args,
+        )
 
         intent = self._intent_resolver.resolve(
             command,
@@ -227,6 +187,15 @@ class ConversationManager:
             result = self._workflow_runner.execute(
                 workflow,
             )
+
+            for action, response in zip(
+                result.executed_actions,
+                result.responses,
+            ):
+                self._conversation_session.update_from_action(
+                    action,
+                    response,
+                )
 
             if result.responses:
 

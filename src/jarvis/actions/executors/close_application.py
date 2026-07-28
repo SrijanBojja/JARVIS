@@ -21,6 +21,10 @@ from jarvis.responses import (
     Response,
     ResponseStatus,
 )
+from jarvis.services.process.exceptions import (
+    ProcessNotFoundError,
+)
+
 
 
 class CloseApplicationExecutor(ActionExecutor):
@@ -95,9 +99,20 @@ class CloseApplicationExecutor(ActionExecutor):
             response.best_match.application
         )
 
-        self._launcher.close(
-            application,
-        )
+        try:
+            self._launcher.close(
+                application,
+            )
+
+        except ProcessNotFoundError:
+
+            return Response(
+                text=(
+                    f"{application.name} "
+                    "is not running."
+                ),
+                status=ResponseStatus.NOT_FOUND,
+            )
 
         return Response(
             text=f"Closing {application.name}...",

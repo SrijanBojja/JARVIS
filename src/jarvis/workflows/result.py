@@ -10,6 +10,8 @@ from jarvis.responses import Response
 
 from .state import WorkflowState
 
+from jarvis.actions import Action
+
 
 @dataclass(slots=True)
 class WorkflowResult:
@@ -22,6 +24,8 @@ class WorkflowResult:
     status: WorkflowState
 
     responses: list[Response]
+
+    executed_actions: list[Action]
 
     completed_steps: int
 

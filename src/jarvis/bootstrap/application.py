@@ -10,8 +10,10 @@ from jarvis.commands.module import CommandModule
 from jarvis.shell import Shell
 from jarvis.utils import CommandHistory
 from jarvis.skills import SkillModule
-from jarvis.voice import VoiceModule
+from jarvis.voice.module import VoiceModule
 from jarvis.conversation import (
+    ApplicationReferences,
+    ReferenceResolver,
     ConversationManager,
     ConversationSession,
 )
@@ -20,7 +22,11 @@ from jarvis.ai import (
     OllamaProvider,
 )
 from jarvis.ai.memory import ConversationMemory
-from jarvis.voice import VoiceAssistant
+from jarvis.voice.assistant import VoiceAssistant
+from jarvis.voice.microphone import Microphone
+from jarvis.voice.recognizer import SpeechRecognizer
+from jarvis.voice.wakeword import WakeWordDetector
+from jarvis.voice.session import VoiceSession
 from jarvis.intents import IntentResolver
 from jarvis.actions import (
     ActionBuilder,
@@ -103,6 +109,11 @@ from jarvis.services.window import (
     WindowService,
     WindowsWindowService,
 )
+from jarvis.presentation import (
+    PresentationPipeline,
+    TerminalPresenter,
+    VoicePresenter,
+)
 
 class ApplicationBootstrap:
     """
@@ -134,6 +145,27 @@ class ApplicationBootstrap:
 
         history = CommandHistory()
         voice_module = VoiceModule()
+        shell_pipeline = PresentationPipeline()
+
+        voice_pipeline = PresentationPipeline()
+        microphone = Microphone()
+        recognizer = SpeechRecognizer()
+        wake_word = WakeWordDetector()
+        voice_session = VoiceSession()
+
+        shell_pipeline.register(
+            TerminalPresenter(),
+        )
+
+        voice_pipeline.register(
+            TerminalPresenter(),
+        )
+
+        voice_pipeline.register(
+            VoicePresenter(
+                voice_module,
+            ),
+        )
         kernel = Kernel()
 
         command_module = CommandModule(
@@ -146,6 +178,15 @@ class ApplicationBootstrap:
         provider = OllamaProvider()
         memory = ConversationMemory()
         conversation_session = ConversationSession()
+        application_references = (
+            ApplicationReferences(
+                conversation_session,
+            )
+        )
+        reference_resolver = ReferenceResolver(
+            application_references,
+            conversation_session,
+        )
 
         ai_service = AIService(
             provider,
@@ -294,16 +335,23 @@ class ApplicationBootstrap:
             workflow_builder,
             workflow_runner,
             conversation_session,
+            reference_resolver,
             application_launcher,
         )
 
         voice_assistant = VoiceAssistant(
             conversation_manager,
+            microphone,
+            recognizer,
+            wake_word,
+            voice_session,
+            voice_pipeline
         )
 
         shell = Shell(
             conversation_manager,
             history,
+            shell_pipeline,
         )
 
         self._container.register(
@@ -339,6 +387,16 @@ class ApplicationBootstrap:
         self._container.register(
             ConversationSession,
             conversation_session,
+        )
+
+        self._container.register(
+            ApplicationReferences,
+            application_references,
+        )
+
+        self._container.register(
+            ReferenceResolver,
+            reference_resolver,
         )
 
         self._container.register(
@@ -454,6 +512,11 @@ class ApplicationBootstrap:
         self._container.register(
             VoiceAssistant,
             voice_assistant,
+        )
+        
+        self._container.register(
+            PresentationPipeline,
+            shell_pipeline,
         )
 
         self._container.register(

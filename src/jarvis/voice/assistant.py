@@ -7,10 +7,10 @@ from jarvis.voice.wakeword import WakeWordDetector
 from jarvis.voice.session import VoiceSession
 from jarvis.voice.microphone import Microphone
 from jarvis.voice.recognizer import SpeechRecognizer
-from jarvis.voice.speaker import Speaker
+from jarvis.presentation import PresentationPipeline
 from jarvis.conversation import ConversationManager
 from jarvis.utils import CommandParser
-
+from jarvis.responses import Response
 
 class VoiceAssistant:
     """
@@ -20,14 +20,19 @@ class VoiceAssistant:
     def __init__(
         self,
         conversation_manager: ConversationManager,
+        microphone: Microphone,
+        recognizer: SpeechRecognizer,
+        wake_word: WakeWordDetector,
+        session: VoiceSession,
+        presentation_pipeline: PresentationPipeline,
     ) -> None:
         self._conversation_manager = conversation_manager
         self._parser = CommandParser()
-        self._microphone = Microphone()
-        self._recognizer = SpeechRecognizer()
-        self._speaker = Speaker()
-        self._wake_word = WakeWordDetector()
-        self._session = VoiceSession()
+        self._microphone = microphone
+        self._recognizer = recognizer
+        self._wake_word = wake_word
+        self._session = session
+        self._presentation_pipeline = presentation_pipeline
 
     def listen(self) -> str:
         """
@@ -41,15 +46,6 @@ class VoiceAssistant:
 
         return self._recognizer.recognize(audio)
 
-    def speak(
-        self,
-        text: str,
-    ) -> None:
-        """
-        Speak text.
-        """
-
-        self._speaker.speak(text)
 
     def run(self) -> None:
         """
@@ -69,7 +65,11 @@ class VoiceAssistant:
             print(f"You: {text}")
 
             if text.lower() == "exit voice":
-                self.speak("Leaving voice mode.")
+                self._presentation_pipeline.present(
+                    Response(
+                        "Leaving voice mode.",
+                    ),
+                )
                 break
 
             if not self._session.active:
@@ -88,7 +88,11 @@ class VoiceAssistant:
                     text = command_text
 
                 else:
-                    self.speak("Yes?")
+                    self._presentation_service.present(
+                        Response(
+                            "Yes?",
+                        ),
+                    )
                     continue
 
             self._session.refresh()
@@ -103,10 +107,14 @@ class VoiceAssistant:
             )
 
             if response is not None:
-                self.speak(
-                    response.text,
+                self._presentation_service.present(
+                    response,
                 )
 
             if self._session.expired():
-                self.speak("Going back to sleep.")
+                self._presentation_service.present(
+                    Response(
+                        "Going back to sleep.",
+                    ),
+                )
                 self._session.stop()

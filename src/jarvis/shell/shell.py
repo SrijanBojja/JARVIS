@@ -7,6 +7,7 @@ from jarvis.utils import (
     CommandHistory,
     CommandParser,
 )
+from jarvis.presentation import PresentationPipeline
 
 
 class Shell:
@@ -18,6 +19,7 @@ class Shell:
         self,
         conversation_manager: ConversationManager,
         history: CommandHistory,
+        presentation_pipeline: PresentationPipeline,
     ) -> None:
         """
         Initialize the shell.
@@ -26,6 +28,7 @@ class Shell:
         self._conversation_manager = conversation_manager
         self._parser = CommandParser()
         self._history = history
+        self._presentation_pipeline = presentation_pipeline
 
     @property
     def history(self) -> CommandHistory:
@@ -62,7 +65,9 @@ class Shell:
                 )
 
                 if response is not None:
-                    print(response.text)
+                    self._presentation_pipeline.present(
+                        response,
+                    )
 
                 else:
                     print(f"Unknown command: {command}")

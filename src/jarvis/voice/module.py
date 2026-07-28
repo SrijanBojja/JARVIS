@@ -28,3 +28,15 @@ class VoiceModule(Module):
 
     def stop(self) -> None:
         self._speaker.speak("Voice module stopped.")
+    
+    def speak(
+        self,
+        text: str,
+    ) -> None:
+        """
+        Speak text.
+        """
+
+        self._speaker.speak(
+            text,
+        )

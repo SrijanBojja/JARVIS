@@ -7,12 +7,12 @@ Responsible for deciding which subsystem should handle a user request.
 from __future__ import annotations
 
 from jarvis.ai import AIService
-from jarvis.applications import ApplicationLauncher
 from jarvis.commands.exceptions import CommandNotFoundError
 from jarvis.commands.module import CommandModule
 from jarvis.conversation.resolver import ReferenceResolver
 from jarvis.conversation.session import ConversationSession
 from jarvis.intents import IntentResolver
+from jarvis.intents import Intent
 from jarvis.responses import (
     Response,
     ResponseStatus,
@@ -36,7 +36,6 @@ class DecisionEngine:
         workflow_runner: WorkflowRunner,
         conversation_session: ConversationSession,
         reference_resolver: ReferenceResolver,
-        application_launcher: ApplicationLauncher,
     ) -> None:
 
         self._command_module = command_module
@@ -47,7 +46,6 @@ class DecisionEngine:
         self._workflow_runner = workflow_runner
         self._conversation_session = conversation_session
         self._reference_resolver = reference_resolver
-        self._application_launcher = application_launcher
 
     def handle(
         self,
@@ -55,67 +53,130 @@ class DecisionEngine:
         args: list[str],
     ) -> Response | None:
 
-        args = self._reference_resolver.resolve(
+        intent, resolved_args = self._resolve_request(
+            command,
+            args,
+        )
+
+        response = self._execute_workflow(
+            intent,
+            resolved_args,
+        )
+
+        if response is not None:
+            return response
+
+        response = self._execute_command(
+            intent.name,
+            resolved_args,
+        )
+
+        if response is not None:
+            return response
+
+        response = self._execute_skill(
+            intent.name,
+            resolved_args,
+        )
+
+        if response is not None:
+            return response
+
+        return self._chat_with_ai(
+            command,
+            args,
+        )
+
+    def _resolve_request(
+        self,
+        command: str,
+        args: list[str],
+    ) -> tuple[Intent, list[str]]:
+
+        resolved_args = self._reference_resolver.resolve(
             command,
             args,
         )
 
         intent = self._intent_resolver.resolve(
             command,
-            args,
+            resolved_args,
         )
+
+        return intent, resolved_args
+
+    def _execute_workflow(
+        self,
+        intent: Intent,
+        args: list[str],
+    ) -> Response | None:
 
         workflow = self._workflow_builder.build(
             intent,
             args,
         )
 
-        if workflow is not None:
+        if workflow is None:
+            return None
 
-            result = self._workflow_runner.execute(
-                workflow,
+        result = self._workflow_runner.execute(
+            workflow,
+        )
+
+        for action, response in zip(
+            result.executed_actions,
+            result.responses,
+        ):
+            self._conversation_session.update_from_action(
+                action,
+                response,
             )
 
-            for action, response in zip(
-                result.executed_actions,
-                result.responses,
-            ):
-                self._conversation_session.update_from_action(
-                    action,
-                    response,
-                )
+        if not result.responses:
+            return None
 
-            if result.responses:
+        response = result.responses[-1]
 
-                response = result.responses[-1]
+        if response.status == ResponseStatus.AMBIGUOUS:
+            self._conversation_session.pending_applications = (
+                response.data
+            )
+        else:
+            self._conversation_session.clear()
 
-                if (
-                    response.status
-                    == ResponseStatus.AMBIGUOUS
-                ):
-                    self._conversation_session.pending_applications = (
-                        response.data
-                    )
-                else:
-                    self._conversation_session.clear()
+        return response
 
-                return response
+    def _execute_command(
+        self,
+        intent_name: str,
+        args: list[str],
+    ) -> Response | None:
 
         try:
             return self._command_module.execute(
-                intent.name,
+                intent_name,
                 args,
             )
 
         except CommandNotFoundError:
+            return None
 
-            response = self._skill_module.execute(
-                intent.name,
-                args,
-            )
+    def _execute_skill(
+        self,
+        intent_name: str,
+        args: list[str],
+    ) -> Response | None:
 
-            if response is not None:
-                return response
+        return self._skill_module.execute(
+            intent_name,
+            args,
+        )
+
+    def _chat_with_ai(
+        self,
+        command: str,
+        args: list[str],
+    ) -> Response:
 
         return self._ai_service.chat(
             " ".join(

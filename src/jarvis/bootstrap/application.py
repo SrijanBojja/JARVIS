@@ -272,7 +272,6 @@ class ApplicationBootstrap:
             workflow_runner=workflow_runner,
             conversation_session=conversation_session,
             reference_resolver=reference_resolver,
-            application_launcher=application_launcher,
         )
         application_search_engine = (
             ApplicationSearchEngine()
@@ -348,16 +347,10 @@ class ApplicationBootstrap:
         )
 
         conversation_manager = ConversationManager(
-            command_module,
-            skill_module,
-            ai_service,
-            intent_resolver,
-            workflow_builder,
-            workflow_runner,
-            conversation_session,
-            reference_resolver,
-            application_launcher,
-            decision_engine,
+            conversation_session=conversation_session,
+            application_launcher=application_launcher,
+            workflow_runner=workflow_runner,
+            decision_engine=decision_engine,
         )
 
         voice_assistant = VoiceAssistant(

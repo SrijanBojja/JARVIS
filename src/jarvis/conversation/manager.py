@@ -4,23 +4,14 @@ Conversation manager.
 
 from __future__ import annotations
 
-from jarvis.ai import AIService
+from jarvis.workflows import WorkflowRunner
 from jarvis.applications import ApplicationLauncher
-from jarvis.commands.exceptions import CommandNotFoundError
-from jarvis.commands.module import CommandModule
-from jarvis.intents import IntentResolver
 from jarvis.responses import (
     Response,
     ResponseStatus,
 )
-from jarvis.skills.module import SkillModule
-from jarvis.workflows import (
-    WorkflowBuilder,
-    WorkflowRunner,
-)
 from jarvis.decision import DecisionEngine
 from .session import ConversationSession
-from .resolver import ReferenceResolver
 
 class ConversationManager:
     """
@@ -29,27 +20,15 @@ class ConversationManager:
 
     def __init__(
         self,
-        command_module: CommandModule,
-        skill_module: SkillModule,
-        ai_service: AIService,
-        intent_resolver: IntentResolver,
-        workflow_builder: WorkflowBuilder,
-        workflow_runner: WorkflowRunner,
         conversation_session: ConversationSession,
-        reference_resolver: ReferenceResolver,
         application_launcher: ApplicationLauncher,
+        workflow_runner: WorkflowRunner,
         decision_engine: DecisionEngine,
     ) -> None:
 
-        self._command_module = command_module
-        self._skill_module = skill_module
-        self._ai_service = ai_service
-        self._intent_resolver = intent_resolver
-        self._workflow_builder = workflow_builder
-        self._workflow_runner = workflow_runner
         self._conversation_session = conversation_session
-        self._reference_resolver = reference_resolver
         self._application_launcher = application_launcher
+        self._workflow_runner = workflow_runner
         self._decision_engine = decision_engine
 
     def handle(

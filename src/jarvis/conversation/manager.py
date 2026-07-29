@@ -18,6 +18,7 @@ from jarvis.workflows import (
     WorkflowBuilder,
     WorkflowRunner,
 )
+from jarvis.decision import DecisionEngine
 from .session import ConversationSession
 from .resolver import ReferenceResolver
 
@@ -37,6 +38,7 @@ class ConversationManager:
         conversation_session: ConversationSession,
         reference_resolver: ReferenceResolver,
         application_launcher: ApplicationLauncher,
+        decision_engine: DecisionEngine,
     ) -> None:
 
         self._command_module = command_module
@@ -48,6 +50,7 @@ class ConversationManager:
         self._conversation_session = conversation_session
         self._reference_resolver = reference_resolver
         self._application_launcher = application_launcher
+        self._decision_engine = decision_engine
 
     def handle(
         self,
@@ -167,70 +170,7 @@ class ConversationManager:
         # Resolve conversational references.
         #
 
-        args = self._reference_resolver.resolve(
+        return self._decision_engine.handle(
             command,
             args,
-        )
-
-        intent = self._intent_resolver.resolve(
-            command,
-            args,
-        )
-
-        workflow = self._workflow_builder.build(
-            intent,
-            args,
-        )
-
-        if workflow is not None:
-
-            result = self._workflow_runner.execute(
-                workflow,
-            )
-
-            for action, response in zip(
-                result.executed_actions,
-                result.responses,
-            ):
-                self._conversation_session.update_from_action(
-                    action,
-                    response,
-                )
-
-            if result.responses:
-
-                response = result.responses[-1]
-
-                if (
-                    response.status
-                    == ResponseStatus.AMBIGUOUS
-                ):
-                    self._conversation_session.pending_applications = (
-                        response.data
-                    )
-                else:
-                    self._conversation_session.clear()
-
-                return response
-
-        try:
-            return self._command_module.execute(
-                intent.name,
-                args,
-            )
-
-        except CommandNotFoundError:
-
-            response = self._skill_module.execute(
-                intent.name,
-                args,
-            )
-
-            if response is not None:
-                return response
-
-        return self._ai_service.chat(
-            " ".join(
-                [command, *args],
-            ).strip(),
         )

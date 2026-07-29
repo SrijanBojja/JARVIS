@@ -4,7 +4,8 @@ Mock AI provider for JARVIS.
 
 from __future__ import annotations
 
-from jarvis.ai import AIProvider
+from jarvis.ai.message import Message
+from jarvis.ai.provider import AIProvider
 from jarvis.responses import Response
 
 
@@ -15,10 +16,15 @@ class MockAIProvider(AIProvider):
 
     def chat(
         self,
-        message: str,
+        messages: list[Message],
     ) -> Response:
 
-        message = message.lower().strip()
+        if not messages:
+            return Response(
+                "Hello! I'm JARVIS."
+            )
+
+        message = messages[-1].content.lower().strip()
 
         if "hello" in message or "hi" in message:
             return Response(

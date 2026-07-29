@@ -4,57 +4,50 @@ Ollama AI provider for JARVIS.
 
 from __future__ import annotations
 
-import httpx
-
-from jarvis.ai.provider import AIProvider
 from jarvis.ai.message import Message
+from jarvis.ai.ollama_runtime import OllamaRuntime
+from jarvis.ai.provider import AIProvider
 from jarvis.responses import Response
 
 
 class OllamaProvider(AIProvider):
     """
-    AI provider backed by Ollama.
+    AI provider backed by an Ollama runtime.
     """
 
     def __init__(
         self,
-        model: str = "qwen2.5:3b",
-        host: str = "http://127.0.0.1:11434",
+        runtime: OllamaRuntime | None = None,
     ) -> None:
-        self._model = model
-        self._host = host
+
+        self._runtime = runtime or OllamaRuntime()
 
     def chat(
         self,
         messages: list[Message],
     ) -> Response:
 
-        try:
-            response = httpx.post(
-                f"{self._host}/api/chat",
-                json={
-                    "model": self._model,
-                    "messages": [
-                        {
-                            "role": message.role,
-                            "content": message.content,
-                        }
-                        for message in messages
-                    ],
-                    "stream": False,
-                },
-                timeout=120,
-            )
+        prompt = self._build_prompt(
+            messages,
+        )
 
-            response.raise_for_status()
+        response = self._runtime.generate(
+            prompt,
+        )
 
-            data = response.json()
+        return Response(
+            response,
+        )
 
-            return Response(
-                data["message"]["content"].strip(),
-            )
+    @staticmethod
+    def _build_prompt(
+        messages: list[Message],
+    ) -> str:
+        """
+        Convert chat messages into a prompt.
+        """
 
-        except Exception as error:
-            return Response(
-                f"Ollama error: {error}"
-            )
+        return "\n".join(
+            f"{message.role}: {message.content}"
+            for message in messages
+        )

@@ -20,6 +20,8 @@ class Settings:
     logs_dir: Path
     voice_engine: str
     voice_model: str
+    ai_model: str
+    ai_host: str
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
@@ -33,4 +35,6 @@ settings = Settings(
     logs_dir=PROJECT_ROOT / "logs",
     voice_engine="piper",
     voice_model="en_US-lessac-medium",
+    ai_model="qwen2.5:3b",
+    ai_host="http://127.0.0.1:11434",
 )

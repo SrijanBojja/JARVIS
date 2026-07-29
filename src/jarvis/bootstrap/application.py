@@ -37,6 +37,9 @@ from jarvis.workflows import (
     WorkflowManager,
     WorkflowRunner,
 )
+from jarvis.decision import (
+    DecisionEngine,
+)
 from jarvis.actions.executors import (
     EchoActionExecutor,
     OpenApplicationExecutor,
@@ -223,6 +226,7 @@ class ApplicationBootstrap:
             workflow_manager,
             action_engine,
         )
+    
 
         application_alias_generator = ApplicationAliasGenerator()
 
@@ -258,6 +262,17 @@ class ApplicationBootstrap:
         application_launcher = ApplicationLauncher(
             process_service,
             window_service,
+        )
+        decision_engine = DecisionEngine(
+            command_module=command_module,
+            skill_module=skill_module,
+            ai_service=ai_service,
+            intent_resolver=intent_resolver,
+            workflow_builder=workflow_builder,
+            workflow_runner=workflow_runner,
+            conversation_session=conversation_session,
+            reference_resolver=reference_resolver,
+            application_launcher=application_launcher,
         )
         application_search_engine = (
             ApplicationSearchEngine()
@@ -342,6 +357,7 @@ class ApplicationBootstrap:
             conversation_session,
             reference_resolver,
             application_launcher,
+            decision_engine,
         )
 
         voice_assistant = VoiceAssistant(
@@ -447,6 +463,11 @@ class ApplicationBootstrap:
         self._container.register(
             WorkflowRunner,
             workflow_runner,
+        )
+
+        self._container.register(
+            DecisionEngine,
+            decision_engine,
         )
 
         self._container.register(

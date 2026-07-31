@@ -181,7 +181,6 @@ class ApplicationBootstrap:
             history,
         )
 
-        skill_module = SkillModule()
 
         provider = OllamaProvider()
         memory = ConversationMemory()
@@ -205,6 +204,9 @@ class ApplicationBootstrap:
         window_service = WindowsWindowService()
         clipboard_service = WindowsClipboardService()
         filesystem_service = WindowsFileSystemService()
+        skill_module = SkillModule(
+            filesystem_service,
+        )
         notification_service = WindowsNotificationService()
         confirmation_manager = ConfirmationManager()
 

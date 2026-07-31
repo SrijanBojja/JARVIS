@@ -44,6 +44,14 @@ class FileSystemService(Service, ABC):
         """
 
     @abstractmethod
+    def current_directory(
+        self,
+    ) -> str:
+        """
+        Return the current working directory.
+        """
+
+    @abstractmethod
     def create_directory(
         self,
         path: str,

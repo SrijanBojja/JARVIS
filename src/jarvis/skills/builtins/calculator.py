@@ -23,6 +23,17 @@ class CalculatorSkill(Skill):
     def description(self) -> str:
         return "Evaluate mathematical expressions."
 
+    @property
+    def aliases(
+        self,
+    ) -> list[str]:
+
+        return [
+            "calculator",
+            "calculate",
+            "math",
+        ]
+
     def execute(
         self,
         args: list[str],

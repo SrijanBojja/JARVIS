@@ -6,6 +6,7 @@ from __future__ import annotations
 
 from abc import ABC
 from abc import abstractmethod
+from jarvis.responses import Response
 
 
 class Skill(ABC):
@@ -23,9 +24,16 @@ class Skill(ABC):
     def description(self) -> str:
         ...
 
+    @property
+    @abstractmethod
+    def aliases(
+        self,
+    ) -> list[str]:
+        ...
+
     @abstractmethod
     def execute(
         self,
         args: list[str],
-    ) -> None:
+    ) -> Response:
         ...

@@ -5,21 +5,35 @@ Skill module for JARVIS.
 from __future__ import annotations
 
 from jarvis.modules import Module
-from jarvis.skills.builtins import CalculatorSkill
+from jarvis.skills.builtins import (
+    BUILTIN_SKILLS,
+)
+from jarvis.skills.builtins.filesystem import (
+    FILESYSTEM_SKILLS,
+)
 from jarvis.skills.manager import SkillManager
 from jarvis.responses import Response
+from jarvis.skills.exceptions import (
+    SkillNotFoundError,
+)
+from jarvis.services.filesystem import FileSystemService
 
 class SkillModule(Module):
     """
     Manages JARVIS skills.
     """
 
-    def __init__(self) -> None:
-        self.manager = SkillManager()
+    def __init__(
+        self,
+        filesystem: FileSystemService,
+    ) -> None:
+
+        self._manager = SkillManager()
+        self._filesystem = filesystem
 
     @property
     def skill_manager(self) -> SkillManager:
-        return self.manager
+        return self._manager
 
     def execute(
         self,
@@ -27,17 +41,32 @@ class SkillModule(Module):
         args: list[str],
     ) -> Response | None:
 
-        skill = self.manager.resolve(name)
+        try:
+            skill = self._manager.resolve(
+                name,
+            )
 
-        if skill is None:
+        except SkillNotFoundError:
             return None
 
-        return skill.execute(args)
+        return skill.execute(
+            args,
+        )
 
     def initialize(self) -> None:
-        self.manager.register(
-            CalculatorSkill(),
-        )
+
+        for skill in BUILTIN_SKILLS:
+
+            if skill in FILESYSTEM_SKILLS:
+                self._manager.register(
+                    skill(
+                        self._filesystem,
+                    ),
+                )
+            else:
+                self._manager.register(
+                    skill(),
+                )
 
     def start(self) -> None:
         pass

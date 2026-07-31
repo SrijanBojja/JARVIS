@@ -29,6 +29,7 @@ class VoicePresenter(Presenter):
         response: Response,
     ) -> None:
 
-        self._voice_module.speak(
-            response.text,
-        )
+        if response.text.strip():
+            self._voice_module.speak(
+                response.text,
+            )

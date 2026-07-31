@@ -139,3 +139,11 @@ class WindowsFileSystemService(FileSystemService):
             raise MoveFileError(
                 f"Unable to move '{source}'."
             ) from exc
+
+    def current_directory(
+        self,
+    ) -> str:
+
+        return str(
+            Path.cwd(),
+        )

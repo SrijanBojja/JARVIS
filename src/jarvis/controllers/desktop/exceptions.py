@@ -1,0 +1,2 @@
+class DesktopControllerError(Exception):
+    pass

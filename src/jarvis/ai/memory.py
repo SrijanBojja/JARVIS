@@ -43,6 +43,25 @@ class ConversationMemory:
             )
         )
 
+    def add_tool_message(
+        self,
+        tool_name: str,
+        content: str,
+        tool_call_id: str | None = None,
+    ) -> None:
+        """
+        Store a tool execution result.
+        """
+
+        self._add(
+            Message(
+                role="tool",
+                name=tool_name,
+                tool_call_id=tool_call_id,
+                content=content,
+            )
+        )
+
     def messages(
         self,
     ) -> list[Message]:

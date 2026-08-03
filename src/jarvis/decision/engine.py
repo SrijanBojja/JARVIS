@@ -22,6 +22,7 @@ from jarvis.workflows import (
     WorkflowBuilder,
     WorkflowRunner,
 )
+from jarvis.vision import VisionService
 
 
 class DecisionEngine:
@@ -36,6 +37,7 @@ class DecisionEngine:
         workflow_runner: WorkflowRunner,
         conversation_session: ConversationSession,
         reference_resolver: ReferenceResolver,
+        vision_service: VisionService,
     ) -> None:
 
         self._command_module = command_module
@@ -46,12 +48,34 @@ class DecisionEngine:
         self._workflow_runner = workflow_runner
         self._conversation_session = conversation_session
         self._reference_resolver = reference_resolver
+        self._vision_service = vision_service
 
     def handle(
         self,
         command: str,
         args: list[str],
     ) -> Response | None:
+
+        message = " ".join(
+            [command, *args],
+        ).lower().strip()
+
+        VISION_COMMANDS = {
+            "what is on my screen",
+            "describe my screen",
+            "describe screen",
+            "look at my screen",
+            "what do you see",
+        }
+
+        if message in VISION_COMMANDS:
+
+            description = self._vision_service.describe_screen()
+
+            return Response(
+                text=description,
+                status=ResponseStatus.SUCCESS,
+            )
 
         intent, resolved_args = self._resolve_request(
             command,

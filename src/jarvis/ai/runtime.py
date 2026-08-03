@@ -1,10 +1,10 @@
-"""
-AI runtime interface for JARVIS.
-"""
-
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Any
+
+from jarvis.ai.message import Message
+from jarvis.ai.models import ChatResponse
 
 
 class AIRuntime(ABC):
@@ -25,10 +25,11 @@ class AIRuntime(ABC):
         """
 
     @abstractmethod
-    def generate(
+    def chat(
         self,
-        prompt: str,
-    ) -> str:
+        messages: list[Message],
+        tools: list[dict[str, Any]] | None = None,
+    ) -> ChatResponse:
         """
-        Generate text from the model.
+        Execute a chat completion request.
         """

@@ -5,9 +5,10 @@ AI provider interface for JARVIS.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from typing import Any
 
 from jarvis.ai.message import Message
-from jarvis.responses import Response
+from jarvis.ai.models import ChatResponse
 
 
 class AIProvider(ABC):
@@ -19,7 +20,8 @@ class AIProvider(ABC):
     def chat(
         self,
         messages: list[Message],
-    ) -> Response:
+        tools: list[dict[str, Any]] | None = None,
+    ) -> ChatResponse:
         """
-        Generate a response from a conversation.
+        Generate a structured chat response.
         """

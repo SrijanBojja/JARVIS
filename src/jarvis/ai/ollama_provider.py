@@ -4,10 +4,12 @@ Ollama AI provider for JARVIS.
 
 from __future__ import annotations
 
+from typing import Any
+
 from jarvis.ai.message import Message
+from jarvis.ai.models import ChatResponse
 from jarvis.ai.ollama_runtime import OllamaRuntime
 from jarvis.ai.provider import AIProvider
-from jarvis.responses import Response
 
 
 class OllamaProvider(AIProvider):
@@ -25,29 +27,13 @@ class OllamaProvider(AIProvider):
     def chat(
         self,
         messages: list[Message],
-    ) -> Response:
-
-        prompt = self._build_prompt(
-            messages,
-        )
-
-        response = self._runtime.generate(
-            prompt,
-        )
-
-        return Response(
-            response,
-        )
-
-    @staticmethod
-    def _build_prompt(
-        messages: list[Message],
-    ) -> str:
+        tools: list[dict[str, Any]] | None = None,
+    ) -> ChatResponse:
         """
-        Convert chat messages into a prompt.
+        Generate a chat response using Ollama.
         """
 
-        return "\n".join(
-            f"{message.role}: {message.content}"
-            for message in messages
+        return self._runtime.chat(
+            messages=messages,
+            tools=tools,
         )

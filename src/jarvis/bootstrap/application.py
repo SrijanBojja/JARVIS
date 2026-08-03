@@ -117,6 +117,12 @@ from jarvis.presentation import (
     TerminalPresenter,
     VoicePresenter,
 )
+from jarvis.tools import(ToolRegistry)
+from jarvis.services.perception import (
+    PerceptionService,
+    WindowsPerceptionService,
+)
+from jarvis.vision import VisionService
 
 class ApplicationBootstrap:
     """
@@ -195,14 +201,22 @@ class ApplicationBootstrap:
             conversation_session,
         )
 
+        tool_registry = ToolRegistry()
         ai_service = AIService(
             provider,
             memory,
+            tool_registry,
         )
         power_service = WindowsPowerService()
         process_service = WindowsProcessService()
         window_service = WindowsWindowService()
         clipboard_service = WindowsClipboardService()
+        perception_service = WindowsPerceptionService(
+            clipboard_service,
+        )
+        vision_service = VisionService(
+            perception_service,
+        )
         filesystem_service = WindowsFileSystemService()
         skill_module = SkillModule(
             filesystem_service,
@@ -274,6 +288,7 @@ class ApplicationBootstrap:
             workflow_runner=workflow_runner,
             conversation_session=conversation_session,
             reference_resolver=reference_resolver,
+            vision_service=vision_service,
         )
         application_search_engine = (
             ApplicationSearchEngine()
@@ -557,12 +572,26 @@ class ApplicationBootstrap:
             clipboard_service,
         )
         self._container.register(
+            PerceptionService,
+            perception_service,
+        )
+
+        self._container.register(
+            VisionService,
+            vision_service,
+        )
+
+        self._container.register(
             FileSystemService,
             filesystem_service,
         )
         self._container.register(
             NotificationService,
             notification_service,
+        )
+        self._container.register(
+            ToolRegistry,
+            tool_registry,
         )
 
         kernel.modules.register(

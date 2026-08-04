@@ -185,6 +185,25 @@ class Planner:
                 ]
             )
 
+        #
+        # Hotkey
+        #
+
+        if command.startswith("hotkey "):
+
+            keys = command.removeprefix(
+                "hotkey "
+            ).strip()
+
+            return Plan(
+                actions=[
+                    Action(
+                        name="hotkey",
+                        target=keys,
+                    )
+                ]
+            )
+
         return Plan(
             actions=[],
         )

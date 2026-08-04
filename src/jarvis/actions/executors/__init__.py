@@ -9,6 +9,7 @@ from .check_application import CheckApplicationExecutor
 from .window_application import WindowApplicationExecutor
 from .type_text_executor import TypeTextExecutor
 from .press_key_executor import PressKeyExecutor
+from .hotkey_executor import HotkeyExecutor
 
 __all__ = [
     "EchoActionExecutor",
@@ -22,4 +23,5 @@ __all__ = [
     "WindowApplicationExecutor",
     "TypeTextExecutor",
     "PressKeyExecutor",
+    "HotkeyExecutor",
 ]

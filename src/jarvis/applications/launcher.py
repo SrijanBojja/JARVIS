@@ -58,14 +58,19 @@ class ApplicationLauncher:
     def close(
         self,
         application: Application,
-    ) -> None:
+    ) -> bool:
         """
         Close an application.
         """
 
+        if not self.is_running(application):
+            return False
+
         self._process_service.terminate(
             application.target,
         )
+
+        return True
 
     def is_running(
         self,
@@ -82,50 +87,70 @@ class ApplicationLauncher:
     def focus(
         self,
         application: Application,
-    ) -> None:
+    ) -> bool:
         """
         Focus an application's window.
         """
+
+        if not self.is_running(application):
+            return False
 
         self._window_service.focus(
             application.target,
         )
 
+        return True
+
 
     def minimize(
         self,
         application: Application,
-    ) -> None:
+    ) -> bool:
         """
         Minimize an application's window.
         """
+
+        if not self.is_running(application):
+            return False
 
         self._window_service.minimize(
             application.target,
         )
 
+        return True
+
 
     def maximize(
         self,
         application: Application,
-    ) -> None:
+    ) -> bool:
         """
         Maximize an application's window.
         """
+
+        if not self.is_running(application):
+            return False
 
         self._window_service.maximize(
             application.target,
         )
 
+        return True
+
 
     def restore(
         self,
         application: Application,
-    ) -> None:
+    ) -> bool:
         """
         Restore an application's window.
         """
 
+        if not self.is_running(application):
+            return False
+
         self._window_service.restore(
             application.target,
         )
+
+        return True

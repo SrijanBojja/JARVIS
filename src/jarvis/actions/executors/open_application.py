@@ -44,10 +44,6 @@ class OpenApplicationExecutor(ActionExecutor):
         action: Action,
     ) -> bool:
 
-        print(
-            f"[OpenApplicationExecutor] "
-            f"supports? action={action.name}, target={action.target}"
-        )
 
         return action.name == "open"
 

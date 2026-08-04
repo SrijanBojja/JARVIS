@@ -102,27 +102,36 @@ class WindowApplicationExecutor(ActionExecutor):
             result.best_match.application
         )
 
+        success = False
+
         match action.name:
 
             case "focus":
-                self._launcher.focus(
+                success = self._launcher.focus(
                     application,
                 )
 
             case "minimize":
-                self._launcher.minimize(
+                success = self._launcher.minimize(
                     application,
                 )
 
             case "maximize":
-                self._launcher.maximize(
+                success = self._launcher.maximize(
                     application,
                 )
 
             case "restore":
-                self._launcher.restore(
+                success = self._launcher.restore(
                     application,
                 )
+
+        if not success:
+
+            return Response(
+                text=f"{application.name} is not running.",
+                status=ResponseStatus.NOT_FOUND,
+            )
 
         verbs = {
             "focus": "Focusing",

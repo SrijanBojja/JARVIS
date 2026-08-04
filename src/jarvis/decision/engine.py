@@ -62,6 +62,10 @@ class DecisionEngine:
         args: list[str],
     ) -> Response | None:
 
+        intent, resolved_args = self._resolve_request(
+            command,
+            args,
+        )
         message = " ".join(
             [command, *args],
         ).lower().strip()
@@ -83,10 +87,6 @@ class DecisionEngine:
                 status=ResponseStatus.SUCCESS,
             )
 
-        intent, resolved_args = self._resolve_request(
-            command,
-            args,
-        )
 
         plan = self._planner.build(message)
 

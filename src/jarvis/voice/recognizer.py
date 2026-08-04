@@ -13,6 +13,16 @@ class SpeechRecognizer:
     """
 
     def __init__(self) -> None:
+
+        self._model: WhisperModel | None = None
+
+    def _load_model(
+        self,
+    ) -> None:
+
+        if self._model is not None:
+            return
+
         print("[Voice] Loading Whisper model...")
 
         self._model = WhisperModel(
@@ -30,6 +40,8 @@ class SpeechRecognizer:
         """
         Convert speech to text.
         """
+
+        self._load_model()
 
         audio_data = audio.get_wav_data()
 

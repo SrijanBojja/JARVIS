@@ -21,11 +21,6 @@ class VisionRuntime:
         prompt: str,
     ) -> str:
 
-        print("=" * 60)
-        print("VISION DEBUG")
-        print("=" * 60)
-        print("Image:", image_path)
-
         response = chat(
             model=self._model,
             messages=[

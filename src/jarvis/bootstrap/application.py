@@ -44,8 +44,10 @@ from jarvis.actions.executors import (
     EchoActionExecutor,
     OpenApplicationExecutor,
     CloseApplicationExecutor,
+    WindowApplicationExecutor,
     CheckApplicationExecutor,
     SystemActionExecutor,
+    TypeTextExecutor,
 )
 from jarvis.applications import (
     ApplicationAliasGenerator,
@@ -90,6 +92,15 @@ from jarvis.services.clipboard import (
     ClipboardService,
     WindowsClipboardService,
 )
+from jarvis.services.perception import (
+    PerceptionService,
+    WindowsPerceptionService,
+)
+from jarvis.services.desktop import (
+    MouseController,
+    KeyboardController,
+    WindowController,
+)
 from jarvis.actions.executors import (
     ClipboardActionExecutor,
 )
@@ -106,7 +117,6 @@ from jarvis.services.notification import (
 )
 from jarvis.actions.executors import (
     NotificationActionExecutor,
-    WindowApplicationExecutor,
 )
 from jarvis.services.window import (
     WindowService,
@@ -118,12 +128,12 @@ from jarvis.presentation import (
     VoicePresenter,
 )
 from jarvis.tools import(ToolRegistry)
-from jarvis.services.perception import (
-    PerceptionService,
-    WindowsPerceptionService,
-)
 from jarvis.vision import VisionService
 from jarvis.planner import Planner
+from jarvis.interaction import (
+    InteractionMode,
+    HybridInteraction,
+)
 
 class ApplicationBootstrap:
     """
@@ -154,15 +164,48 @@ class ApplicationBootstrap:
         initialize_logging()
 
         history = CommandHistory()
+        print()
+        print("=" * 50)
+        print("Select Interaction Mode")
+        print("=" * 50)
+        print("1. Shell")
+        print("2. Voice")
+        print("3. Hybrid")
+        print()
+
+        choice = input("Choice > ").strip()
+
+        match choice:
+
+            case "2":
+                interaction_mode = InteractionMode.VOICE
+
+            case "3":
+                interaction_mode = InteractionMode.HYBRID
+
+            case _:
+                interaction_mode = InteractionMode.SHELL
         voice_module = VoiceModule()
-        shell_pipeline = PresentationPipeline()
-
         voice_pipeline = PresentationPipeline()
-        microphone = Microphone()
-        recognizer = SpeechRecognizer()
-        wake_word = WakeWordDetector()
-        voice_session = VoiceSession()
 
+        microphone = None
+        recognizer = None
+        wake_word = None
+        voice_session = None
+
+        if interaction_mode in {
+            InteractionMode.VOICE,
+            InteractionMode.HYBRID,
+        }:
+
+            microphone = Microphone()
+            recognizer = SpeechRecognizer()
+            wake_word = WakeWordDetector()
+            voice_session = VoiceSession()
+            
+
+        
+        shell_pipeline = PresentationPipeline()
         shell_pipeline.register(
             TerminalPresenter(),
         )
@@ -218,6 +261,9 @@ class ApplicationBootstrap:
         vision_service = VisionService(
             perception_service,
         )
+        mouse_controller = MouseController()
+        keyboard_controller = KeyboardController()
+        window_controller = WindowController()
         filesystem_service = WindowsFileSystemService()
         skill_module = SkillModule(
             filesystem_service,
@@ -281,6 +327,9 @@ class ApplicationBootstrap:
             process_service,
             window_service,
         )
+        type_text_executor = TypeTextExecutor(
+            keyboard_controller,
+        )
         decision_engine = DecisionEngine(
             command_module=command_module,
             skill_module=skill_module,
@@ -323,7 +372,9 @@ class ApplicationBootstrap:
                 application_launcher,
             ),
         )
-
+        action_engine.register(
+            type_text_executor,
+        )
         action_engine.register(
             CloseApplicationExecutor(
                 application_search_engine,
@@ -374,20 +425,46 @@ class ApplicationBootstrap:
             decision_engine=decision_engine,
         )
 
-        voice_assistant = VoiceAssistant(
-            conversation_manager,
-            microphone,
-            recognizer,
-            wake_word,
-            voice_session,
-            voice_pipeline
-        )
+        voice_assistant = None
+
+        if interaction_mode in {
+            InteractionMode.VOICE,
+            InteractionMode.HYBRID,
+        }:
+
+            voice_assistant = VoiceAssistant(
+                conversation_manager,
+                microphone,
+                recognizer,
+                wake_word,
+                voice_session,
+                voice_pipeline,
+            )
 
         shell = Shell(
             conversation_manager,
             history,
             shell_pipeline,
         )
+
+        hybrid = None
+
+        if (
+            interaction_mode
+            == InteractionMode.HYBRID
+        ):
+
+            from jarvis.interaction import HybridInteraction
+
+            hybrid = HybridInteraction(
+                shell,
+                voice_assistant,
+            )
+
+            self._container.register(
+                HybridInteraction,
+                hybrid,
+            )
 
         self._container.register(
             CommandModule,
@@ -549,10 +626,12 @@ class ApplicationBootstrap:
             memory,
         )
 
-        self._container.register(
-            VoiceAssistant,
-            voice_assistant,
-        )
+        if voice_assistant is not None:
+
+            self._container.register(
+                VoiceAssistant,
+                voice_assistant,
+            )
         
         self._container.register(
             PresentationPipeline,
@@ -585,6 +664,19 @@ class ApplicationBootstrap:
             vision_service,
         )
         self._container.register(
+            MouseController,
+            mouse_controller,
+        )
+        self._container.register(
+            KeyboardController,
+            keyboard_controller,
+        )
+        self._container.register(
+            WindowController,
+            window_controller,
+        )
+
+        self._container.register(
             Planner,
             planner,
         )
@@ -615,4 +707,21 @@ class ApplicationBootstrap:
         )
 
         self._container.resolve(Kernel).start()
-        self._container.resolve(Shell).run()
+
+        match interaction_mode:
+
+            case InteractionMode.SHELL:
+
+                self._container.resolve(
+                    Shell,
+                ).run()
+
+            case InteractionMode.VOICE:
+
+                voice_assistant.run()
+
+            case InteractionMode.HYBRID:
+
+                self._container.resolve(
+                    HybridInteraction,
+                ).run()

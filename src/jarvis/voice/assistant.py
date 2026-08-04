@@ -47,29 +47,59 @@ class VoiceAssistant:
         return self._recognizer.recognize(audio)
 
 
-    def run(self) -> None:
+    def run(
+        self,
+    ) -> None:
         """
         Start the voice assistant.
         """
 
+        EXIT_COMMANDS = {
+            "exit",
+            "quit",
+            "bye",
+            "goodbye",
+            "stop listening",
+            "exit voice",
+        }
+
         while True:
 
-            text = self.listen()
+            text = self.listen().strip()
 
             if not text:
+
                 if self._session.expired():
-                    self.speak("Going back to sleep.")
+
+                    self._presentation_pipeline.present(
+                        Response(
+                            "Going back to sleep.",
+                        ),
+                    )
+
                     self._session.stop()
+
                 continue
 
             print(f"You: {text}")
 
-            if text.lower() == "exit voice":
+            normalized = (
+                text.lower()
+                .strip()
+                .rstrip(".!?")
+            )
+
+            if any(
+                command in normalized
+                for command in EXIT_COMMANDS
+            ):
+
                 self._presentation_pipeline.present(
                     Response(
                         "Leaving voice mode.",
                     ),
                 )
+
                 break
 
             if not self._session.active:
@@ -88,11 +118,13 @@ class VoiceAssistant:
                     text = command_text
 
                 else:
-                    self._presentation_service.present(
+
+                    self._presentation_pipeline.present(
                         Response(
                             "Yes?",
                         ),
                     )
+
                     continue
 
             self._session.refresh()
@@ -107,14 +139,17 @@ class VoiceAssistant:
             )
 
             if response is not None:
-                self._presentation_service.present(
+
+                self._presentation_pipeline.present(
                     response,
                 )
 
             if self._session.expired():
-                self._presentation_service.present(
+
+                self._presentation_pipeline.present(
                     Response(
                         "Going back to sleep.",
                     ),
                 )
+
                 self._session.stop()

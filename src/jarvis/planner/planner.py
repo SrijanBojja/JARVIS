@@ -204,6 +204,86 @@ class Planner:
                 ]
             )
 
+        #
+        # Mouse click
+        #
+
+        if command == "click":
+
+            return Plan(
+                actions=[
+                    Action(
+                        name="click",
+                    )
+                ]
+            )
+
+        #
+        # Mouse double click
+        #
+
+        if command == "double click":
+
+            return Plan(
+                actions=[
+                    Action(
+                        name="double_click",
+                    )
+                ]
+            )
+
+        #
+        # Mouse right click
+        #
+
+        if command == "right click":
+
+            return Plan(
+                actions=[
+                    Action(
+                        name="right_click",
+                    )
+                ]
+            )
+
+        #
+        # Mouse scroll
+        #
+
+        if command.startswith("scroll "):
+
+            amount = command.removeprefix(
+                "scroll "
+            ).strip()
+
+            return Plan(
+                actions=[
+                    Action(
+                        name="scroll",
+                        target=amount,
+                    )
+                ]
+            )
+
+        #
+        # Move mouse
+        #
+
+        if command.startswith("move mouse "):
+
+            target = command.removeprefix(
+                "move mouse "
+            ).strip()
+
+            return Plan(
+                actions=[
+                    Action(
+                        name="move_mouse",
+                        target=target,
+                    )
+                ]
+            )
+
         return Plan(
             actions=[],
         )

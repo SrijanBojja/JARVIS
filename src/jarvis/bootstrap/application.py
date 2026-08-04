@@ -50,6 +50,11 @@ from jarvis.actions.executors import (
     TypeTextExecutor,
     PressKeyExecutor,
     HotkeyExecutor,
+    ClickExecutor,
+    DoubleClickExecutor,
+    RightClickExecutor,
+    ScrollExecutor,
+    MoveMouseExecutor,
 )
 from jarvis.applications import (
     ApplicationAliasGenerator,
@@ -338,6 +343,21 @@ class ApplicationBootstrap:
         hotkey_executor = HotkeyExecutor(
             keyboard_controller,
         )
+        click_executor = ClickExecutor(
+            mouse_controller,
+        )
+        double_click_executor = DoubleClickExecutor(
+            mouse_controller,
+        )
+        right_click_executor = RightClickExecutor(
+            mouse_controller,
+        )
+        scroll_executor = ScrollExecutor(
+            mouse_controller
+        )
+        move_mouse_executor = MoveMouseExecutor(
+            mouse_controller
+        )
         decision_engine = DecisionEngine(
             command_module=command_module,
             skill_module=skill_module,
@@ -389,6 +409,22 @@ class ApplicationBootstrap:
         action_engine.register(
             hotkey_executor,
         )
+        action_engine.register(
+            click_executor,
+        )
+        action_engine.register(
+            double_click_executor,
+        )
+        action_engine.register(
+            right_click_executor,
+        )
+        action_engine.register(
+            scroll_executor,
+        )
+        action_engine.register(
+            move_mouse_executor,
+        )
+
         action_engine.register(
             CloseApplicationExecutor(
                 application_search_engine,

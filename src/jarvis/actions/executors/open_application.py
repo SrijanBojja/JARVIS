@@ -34,6 +34,7 @@ class OpenApplicationExecutor(ActionExecutor):
         store: ApplicationStore,
         launcher: ApplicationLauncher,
     ) -> None:
+
         self._search_engine = search_engine
         self._store = store
         self._launcher = launcher
@@ -42,6 +43,12 @@ class OpenApplicationExecutor(ActionExecutor):
         self,
         action: Action,
     ) -> bool:
+
+        print(
+            f"[OpenApplicationExecutor] "
+            f"supports? action={action.name}, target={action.target}"
+        )
+
         return action.name == "open"
 
     def execute(
@@ -93,10 +100,6 @@ class OpenApplicationExecutor(ActionExecutor):
                 status=ResponseStatus.AMBIGUOUS,
                 data=response.matches,
             )
-
-        application = (
-            response.best_match.application
-        )
 
         application = (
             response.best_match.application

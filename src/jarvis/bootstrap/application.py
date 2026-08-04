@@ -123,6 +123,7 @@ from jarvis.services.perception import (
     WindowsPerceptionService,
 )
 from jarvis.vision import VisionService
+from jarvis.planner import Planner
 
 class ApplicationBootstrap:
     """
@@ -243,6 +244,7 @@ class ApplicationBootstrap:
             action_engine,
         )
     
+        planner = Planner()
 
         application_alias_generator = ApplicationAliasGenerator()
 
@@ -289,6 +291,8 @@ class ApplicationBootstrap:
             conversation_session=conversation_session,
             reference_resolver=reference_resolver,
             vision_service=vision_service,
+            planner=planner,
+            action_engine=action_engine,
         )
         application_search_engine = (
             ApplicationSearchEngine()
@@ -579,6 +583,10 @@ class ApplicationBootstrap:
         self._container.register(
             VisionService,
             vision_service,
+        )
+        self._container.register(
+            Planner,
+            planner,
         )
 
         self._container.register(

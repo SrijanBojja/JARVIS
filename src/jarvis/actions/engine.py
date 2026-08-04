@@ -46,6 +46,10 @@ class ActionEngine:
         """
 
         for executor in self._executors:
+            print(
+                f"Checking executor: "
+                f"{executor.__class__.__name__}"
+            )
             if not executor.supports(action):
                 continue
 

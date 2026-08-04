@@ -23,6 +23,8 @@ from jarvis.workflows import (
     WorkflowRunner,
 )
 from jarvis.vision import VisionService
+from jarvis.planner import Planner
+from jarvis.actions.engine import ActionEngine
 
 
 class DecisionEngine:
@@ -38,6 +40,8 @@ class DecisionEngine:
         conversation_session: ConversationSession,
         reference_resolver: ReferenceResolver,
         vision_service: VisionService,
+        planner: Planner,
+        action_engine: ActionEngine,
     ) -> None:
 
         self._command_module = command_module
@@ -49,6 +53,8 @@ class DecisionEngine:
         self._conversation_session = conversation_session
         self._reference_resolver = reference_resolver
         self._vision_service = vision_service
+        self._planner = planner
+        self._action_engine = action_engine
 
     def handle(
         self,
@@ -82,6 +88,20 @@ class DecisionEngine:
             args,
         )
 
+        plan = self._planner.build(message)
+
+        if plan.actions:
+
+            response = None
+
+            for action in plan.actions:
+                response = self._action_engine.execute(
+                    action,
+                )
+
+            if response is not None:
+                return response
+        
         response = self._execute_workflow(
             intent,
             resolved_args,
@@ -110,6 +130,7 @@ class DecisionEngine:
             command,
             args,
         )
+
 
     def _resolve_request(
         self,

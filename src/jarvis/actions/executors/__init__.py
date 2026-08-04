@@ -8,6 +8,7 @@ from .close_application import CloseApplicationExecutor
 from .check_application import CheckApplicationExecutor
 from .window_application import WindowApplicationExecutor
 from .type_text_executor import TypeTextExecutor
+from .press_key_executor import PressKeyExecutor
 
 __all__ = [
     "EchoActionExecutor",
@@ -20,4 +21,5 @@ __all__ = [
     "CheckApplicationExecutor",
     "WindowApplicationExecutor",
     "TypeTextExecutor",
+    "PressKeyExecutor",
 ]

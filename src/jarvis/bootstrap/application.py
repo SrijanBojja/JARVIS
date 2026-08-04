@@ -48,6 +48,7 @@ from jarvis.actions.executors import (
     CheckApplicationExecutor,
     SystemActionExecutor,
     TypeTextExecutor,
+    PressKeyExecutor,
 )
 from jarvis.applications import (
     ApplicationAliasGenerator,
@@ -330,6 +331,9 @@ class ApplicationBootstrap:
         type_text_executor = TypeTextExecutor(
             keyboard_controller,
         )
+        press_key_executor = PressKeyExecutor(
+            keyboard_controller,
+        )
         decision_engine = DecisionEngine(
             command_module=command_module,
             skill_module=skill_module,
@@ -374,6 +378,9 @@ class ApplicationBootstrap:
         )
         action_engine.register(
             type_text_executor,
+        )
+        action_engine.register(
+            press_key_executor,
         )
         action_engine.register(
             CloseApplicationExecutor(

@@ -165,6 +165,26 @@ class Planner:
                 ]
             )
 
+
+        #
+        # Press key
+        #
+
+        if command.startswith("press "):
+
+            key = command.removeprefix(
+                "press "
+            ).strip()
+
+            return Plan(
+                actions=[
+                    Action(
+                        name="press",
+                        target=key,
+                    )
+                ]
+            )
+
         return Plan(
             actions=[],
         )

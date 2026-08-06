@@ -72,7 +72,7 @@ class DecisionEngine:
             args,
         )
         message = " ".join(
-            [command, *args],
+            [command, *resolved_args],
         ).lower().strip()
 
         VISION_COMMANDS = {
@@ -91,7 +91,6 @@ class DecisionEngine:
                 text=description,
                 status=ResponseStatus.SUCCESS,
             )
-
 
         planning_result = self._planner.build(
             message,
@@ -123,6 +122,12 @@ class DecisionEngine:
                     action,
                 )
 
+                if response is not None:
+                    self._conversation_session.update_from_action(
+                        action,
+                        response,
+                    )
+
             if response is not None:
                 return response
         
@@ -152,7 +157,7 @@ class DecisionEngine:
 
         return self._chat_with_ai(
             command,
-            args,
+            resolved_args,
         )
 
 

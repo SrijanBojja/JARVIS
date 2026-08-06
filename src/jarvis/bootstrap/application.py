@@ -136,7 +136,12 @@ from jarvis.presentation import (
 )
 from jarvis.tools import(ToolRegistry)
 from jarvis.vision import VisionService
-from jarvis.planner import Planner
+from jarvis.planner import (
+    Planner,
+    AIPlanner,
+    PlannerParser,
+    PlannerValidator,
+)
 from jarvis.interaction import (
     InteractionMode,
     HybridInteraction,
@@ -298,6 +303,13 @@ class ApplicationBootstrap:
         )
     
         planner = Planner()
+        planner_parser = PlannerParser()
+        planner_validator = PlannerValidator()
+        ai_planner = AIPlanner(
+            ai_service,
+            planner_parser,
+            planner_validator,
+        )
 
         application_alias_generator = ApplicationAliasGenerator()
 
@@ -369,6 +381,7 @@ class ApplicationBootstrap:
             reference_resolver=reference_resolver,
             vision_service=vision_service,
             planner=planner,
+            ai_planner=ai_planner,
             action_engine=action_engine,
         )
         application_search_engine = (
@@ -729,6 +742,18 @@ class ApplicationBootstrap:
         self._container.register(
             Planner,
             planner,
+        )
+        self._container.register(
+            AIPlanner,
+            ai_planner,
+        )
+        self._container.register(
+            PlannerParser,
+            planner_parser,
+        )
+        self._container.register(
+            PlannerValidator,
+            planner_validator,
         )
 
         self._container.register(

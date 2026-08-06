@@ -10,6 +10,7 @@ import win32con
 import win32gui
 import win32process
 import win32api
+import time
 
 from .exceptions import (
     WindowNotFoundError,
@@ -27,7 +28,7 @@ class WindowsWindowService(WindowService):
         self,
         target: str,
     ) -> None:
-        hwnd = self._find_window(target)
+        hwnd = self._wait_for_window(target)
 
         try:
             if win32gui.IsIconic(hwnd):
@@ -89,7 +90,7 @@ class WindowsWindowService(WindowService):
         self,
         target: str,
     ) -> None:
-        hwnd = self._find_window(target)
+        hwnd = self._wait_for_window(target)
 
         try:
             win32gui.ShowWindow(hwnd, win32con.SW_MINIMIZE)
@@ -103,7 +104,7 @@ class WindowsWindowService(WindowService):
         self,
         target: str,
     ) -> None:
-        hwnd = self._find_window(target)
+        hwnd = self._wait_for_window(target)
 
         try:
             win32gui.ShowWindow(hwnd, win32con.SW_MAXIMIZE)
@@ -117,7 +118,7 @@ class WindowsWindowService(WindowService):
         self,
         target: str,
     ) -> None:
-        hwnd = self._find_window(target)
+        hwnd = self._wait_for_window(target)
 
         try:
             win32gui.ShowWindow(hwnd, win32con.SW_RESTORE)
@@ -126,6 +127,33 @@ class WindowsWindowService(WindowService):
             raise WindowOperationError(
                 f"Unable to restore '{target}'."
             ) from exc
+
+    def _wait_for_window(
+        self,
+        target: str,
+        timeout: float = 5.0,
+    ) -> int:
+        """
+        Wait until a window exists.
+        """
+
+        deadline = time.time() + timeout
+
+        while time.time() < deadline:
+
+            try:
+                return self._find_window(
+                    target,
+                )
+
+            except WindowNotFoundError:
+                time.sleep(
+                    0.1,
+                )
+
+        raise WindowNotFoundError(
+            f"Window for '{target}' not found."
+        )
 
     def _find_window(
         self,

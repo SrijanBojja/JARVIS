@@ -4,6 +4,7 @@ from jarvis.actions import Action
 
 from .plan import Plan
 
+from .result import PlanningResult
 
 class Planner:
     """
@@ -13,9 +14,13 @@ class Planner:
     def build(
         self,
         command: str,
-    ) -> Plan:
+    ) -> PlanningResult:
 
         command = command.lower().strip()
+        if " and " in command:
+            return self._plan_compound(
+                command,
+            )
 
         #
         # Type text
@@ -27,13 +32,16 @@ class Planner:
                 "type "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="type",
-                        target=text,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="type",
+                            target=text,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -46,13 +54,16 @@ class Planner:
                 "open "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="open",
-                        target=target,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="open",
+                            target=target,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -65,13 +76,16 @@ class Planner:
                 "close "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="close",
-                        target=target,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="close",
+                            target=target,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -84,13 +98,16 @@ class Planner:
                 "focus "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="focus",
-                        target=target,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="focus",
+                            target=target,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         if command.startswith("activate "):
@@ -99,13 +116,16 @@ class Planner:
                 "activate "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="focus",
-                        target=target,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="focus",
+                            target=target,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -118,13 +138,16 @@ class Planner:
                 "minimize "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="minimize",
-                        target=target,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="minimize",
+                            target=target,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -137,13 +160,16 @@ class Planner:
                 "maximize "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="maximize",
-                        target=target,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="maximize",
+                            target=target,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -156,13 +182,16 @@ class Planner:
                 "restore "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="restore",
-                        target=target,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="restore",
+                            target=target,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
 
@@ -176,13 +205,16 @@ class Planner:
                 "press "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="press",
-                        target=key,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="press",
+                            target=key,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -195,27 +227,32 @@ class Planner:
                 "hotkey "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="hotkey",
-                        target=keys,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="hotkey",
+                            target=keys,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
-
         #
         # Mouse click
         #
 
         if command == "click":
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="click",
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="click",
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -224,12 +261,15 @@ class Planner:
 
         if command == "double click":
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="double_click",
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="double_click",
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -238,12 +278,15 @@ class Planner:
 
         if command == "right click":
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="right_click",
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="right_click",
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -256,13 +299,16 @@ class Planner:
                 "scroll "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="scroll",
-                        target=amount,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="scroll",
+                            target=amount,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
         #
@@ -275,15 +321,59 @@ class Planner:
                 "move mouse "
             ).strip()
 
-            return Plan(
-                actions=[
-                    Action(
-                        name="move_mouse",
-                        target=target,
-                    )
-                ]
+            return PlanningResult(
+                plan=Plan(
+                    actions=[
+                        Action(
+                            name="move_mouse",
+                            target=target,
+                        )
+                    ],
+                ),
+                remaining_text="",
             )
 
-        return Plan(
-            actions=[],
+        return PlanningResult(
+            plan=Plan(
+                actions=[],
+            ),
+            remaining_text=command,
+        )
+
+    def _plan_compound(
+        self,
+        command: str,
+    ) -> PlanningResult:
+
+        actions: list[Action] = []
+
+        remaining_parts: list[str] = []
+
+        parts = [
+            part.strip()
+            for part in command.split(" and ")
+        ]
+
+        for part in parts:
+
+            result = self.build(
+                part,
+            )
+
+            actions.extend(
+                result.plan.actions,
+            )
+
+            if result.remaining_text:
+                remaining_parts.append(
+                    result.remaining_text,
+                )
+
+        return PlanningResult(
+            plan=Plan(
+                actions=actions,
+            ),
+            remaining_text=" and ".join(
+                remaining_parts,
+            ),
         )

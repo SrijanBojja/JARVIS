@@ -39,6 +39,10 @@ class PiperEngine(SpeechEngine):
         self._voice = PiperVoice.load(
             voice_path,
         )
+        if not voice_path.exists():
+            raise FileNotFoundError(
+                f"Piper voice model '{settings.voice_model}' was not found: {voice_path}"
+            )
 
     def speak(
         self,

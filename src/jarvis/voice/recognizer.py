@@ -26,7 +26,7 @@ class SpeechRecognizer:
         print("[Voice] Loading Whisper model...")
 
         self._model = WhisperModel(
-            "base",
+            "small",
             device="cpu",
             compute_type="int8",
         )
@@ -51,6 +51,7 @@ class SpeechRecognizer:
         segments, _ = self._model.transcribe(
             "temp.wav",
             beam_size=5,
+            language="en",
         )
 
         text = " ".join(

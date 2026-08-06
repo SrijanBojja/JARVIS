@@ -54,6 +54,8 @@ class VoiceAssistant:
         Start the voice assistant.
         """
 
+        self._session.start()
+
         EXIT_COMMANDS = {
             "exit",
             "quit",
@@ -65,7 +67,11 @@ class VoiceAssistant:
 
         while True:
 
-            text = self.listen().strip()
+            text = (
+                self.listen()
+                .strip()
+                .rstrip(".!?")
+            )
 
             if not text:
 
@@ -102,30 +108,6 @@ class VoiceAssistant:
 
                 break
 
-            if not self._session.active:
-
-                command_text = self._wake_word.extract(
-                    text,
-                )
-
-                if command_text is None:
-                    continue
-
-                self._session.start()
-
-                if command_text:
-
-                    text = command_text
-
-                else:
-
-                    self._presentation_pipeline.present(
-                        Response(
-                            "Yes?",
-                        ),
-                    )
-
-                    continue
 
             self._session.refresh()
 

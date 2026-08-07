@@ -28,6 +28,7 @@ from jarvis.planner import (
     AIPlanner,
 )
 from jarvis.actions.engine import ActionEngine
+from jarvis.automation import AutomationRunner
 
 
 class DecisionEngine:
@@ -46,6 +47,7 @@ class DecisionEngine:
         planner: Planner,
         ai_planner: AIPlanner,
         action_engine: ActionEngine,
+        automation_runner: AutomationRunner,
     ) -> None:
 
         self._command_module = command_module
@@ -60,6 +62,7 @@ class DecisionEngine:
         self._planner = planner
         self._ai_planner = ai_planner
         self._action_engine = action_engine
+        self._automation_runner = automation_runner
 
     def handle(
         self,
@@ -114,22 +117,12 @@ class DecisionEngine:
 
         if plan.actions:
 
-            response = None
+            result = self._automation_runner.execute(
+                plan,
+            )
 
-            for action in plan.actions:
-
-                response = self._action_engine.execute(
-                    action,
-                )
-
-                if response is not None:
-                    self._conversation_session.update_from_action(
-                        action,
-                        response,
-                    )
-
-            if response is not None:
-                return response
+            if result.responses:
+                return result.responses[-1]
         
         response = self._execute_workflow(
             intent,

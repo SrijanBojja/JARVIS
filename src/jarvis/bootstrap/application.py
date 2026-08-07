@@ -146,6 +146,10 @@ from jarvis.interaction import (
     InteractionMode,
     HybridInteraction,
 )
+from jarvis.automation import (
+    AutomationRunner,
+    AutomationResult,
+)
 
 class ApplicationBootstrap:
     """
@@ -370,6 +374,10 @@ class ApplicationBootstrap:
         move_mouse_executor = MoveMouseExecutor(
             mouse_controller
         )
+        automation_runner = AutomationRunner(
+            action_engine=action_engine,
+            conversation_session=conversation_session,
+        )
         decision_engine = DecisionEngine(
             command_module=command_module,
             skill_module=skill_module,
@@ -383,6 +391,7 @@ class ApplicationBootstrap:
             planner=planner,
             ai_planner=ai_planner,
             action_engine=action_engine,
+            automation_runner=automation_runner,
         )
         application_search_engine = (
             ApplicationSearchEngine()

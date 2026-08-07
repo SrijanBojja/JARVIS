@@ -149,6 +149,8 @@ from jarvis.interaction import (
 from jarvis.automation import (
     AutomationRunner,
     AutomationResult,
+    AutomationVerifier,
+    VisionAutomationVerifier
 )
 
 class ApplicationBootstrap:
@@ -374,9 +376,13 @@ class ApplicationBootstrap:
         move_mouse_executor = MoveMouseExecutor(
             mouse_controller
         )
+        automation_verifier = VisionAutomationVerifier(
+            vision_service=vision_service,
+        )
         automation_runner = AutomationRunner(
             action_engine=action_engine,
             conversation_session=conversation_session,
+            verifier=automation_verifier,
         )
         decision_engine = DecisionEngine(
             command_module=command_module,

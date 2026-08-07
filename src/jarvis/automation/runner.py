@@ -9,6 +9,7 @@ from jarvis.conversation.session import ConversationSession
 from jarvis.planner.plan import Plan
 
 from .result import AutomationResult
+from .verifier import AutomationVerifier
 
 
 class AutomationRunner:
@@ -20,10 +21,12 @@ class AutomationRunner:
         self,
         action_engine: ActionEngine,
         conversation_session: ConversationSession,
+        verifier: AutomationVerifier,
     ) -> None:
 
         self._action_engine = action_engine
         self._conversation_session = conversation_session
+        self._verifier = verifier
 
     def execute(
         self,
@@ -37,7 +40,12 @@ class AutomationRunner:
             response = self._action_engine.execute(
                 action,
             )
-
+            
+            if not self._verifier.verify(
+                action,
+            ):
+                break
+            
             responses.append(
                 response,
             )

@@ -8,7 +8,7 @@ from jarvis.services.perception import PerceptionService
 
 from .ollama_provider import OllamaVisionProvider
 from .provider import VisionProvider
-
+from jarvis.actions import Action
 
 class VisionService:
 
@@ -44,9 +44,18 @@ class VisionService:
     ) -> str:
 
         return self._provider.describe(
-            r"C:\Users\srija\AppData\Local\Temp\jarvis\screenshots\20260803_201852.png",
+            self.capture_screen(),
             prompt,
         )
+
+    def capture_screen(
+        self,
+    ) -> str:
+        """
+        Capture the current screen and return its image path.
+        """
+
+        return self._perception.capture_screen()
 
     def describe_image(
         self,
@@ -59,4 +68,48 @@ class VisionService:
         return self._provider.describe(
             image_path,
             prompt,
+        )
+
+    def verify_action(
+        self,
+        action: Action,
+    ) -> bool:
+        """
+        Verify whether an action succeeded.
+        """
+
+        prompt = f"""
+        You are verifying a desktop automation step.
+
+        Executed action:
+        {action.name}
+
+        Target:
+        {action.target or "None"}
+
+        Look at the screenshot.
+
+        Determine whether the requested action has already
+        succeeded.
+
+        Respond with ONLY one word.
+
+        YES
+
+        or
+
+        NO
+        """
+
+        image_path = self.capture_screen()
+
+        result = self._provider.describe(
+            image_path,
+            prompt,
+        )
+
+        return (
+            result.strip()
+            .upper()
+            .startswith("YES")
         )

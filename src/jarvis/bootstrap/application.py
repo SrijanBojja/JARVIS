@@ -150,7 +150,8 @@ from jarvis.automation import (
     AutomationRunner,
     AutomationResult,
     AutomationVerifier,
-    VisionAutomationVerifier
+    VisionAutomationVerifier,
+    AutomationRecovery,
 )
 
 class ApplicationBootstrap:
@@ -379,11 +380,17 @@ class ApplicationBootstrap:
         automation_verifier = VisionAutomationVerifier(
             vision_service=vision_service,
         )
+        automation_recovery = AutomationRecovery(
+            action_engine=action_engine,
+        )
+        
         automation_runner = AutomationRunner(
             action_engine=action_engine,
             conversation_session=conversation_session,
             verifier=automation_verifier,
+            recovery=automation_recovery,
         )
+
         decision_engine = DecisionEngine(
             command_module=command_module,
             skill_module=skill_module,

@@ -10,6 +10,7 @@ from jarvis.planner.plan import Plan
 
 from .result import AutomationResult
 from .verifier import AutomationVerifier
+from .recovery import AutomationRecovery
 
 
 class AutomationRunner:
@@ -22,11 +23,13 @@ class AutomationRunner:
         action_engine: ActionEngine,
         conversation_session: ConversationSession,
         verifier: AutomationVerifier,
+        recovery: AutomationRecovery,
     ) -> None:
 
         self._action_engine = action_engine
         self._conversation_session = conversation_session
         self._verifier = verifier
+        self._recovery = recovery
 
     def execute(
         self,
@@ -40,12 +43,26 @@ class AutomationRunner:
             response = self._action_engine.execute(
                 action,
             )
-            
+
             if not self._verifier.verify(
                 action,
+                response,
             ):
-                break
-            
+
+                recovery_response = self._recovery.recover(
+                    action,
+                )
+
+                if recovery_response is None:
+                    break
+
+                response = recovery_response
+
+                if not self._verifier.verify(
+                    action,
+                ):
+                    break
+
             responses.append(
                 response,
             )

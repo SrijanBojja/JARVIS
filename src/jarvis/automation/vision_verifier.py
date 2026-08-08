@@ -5,16 +5,13 @@ Vision-based automation verification.
 from __future__ import annotations
 
 from jarvis.actions import Action
+from jarvis.responses import Response
 from jarvis.vision import VisionService
 
-from .verifier import AutomationVerifier
 
-
-class VisionAutomationVerifier(
-    AutomationVerifier,
-):
+class VisionAutomationVerifier:
     """
-    Verifies actions using the VisionService.
+    Verifies automation actions using visual feedback.
     """
 
     def __init__(
@@ -27,24 +24,20 @@ class VisionAutomationVerifier(
     def verify(
         self,
         action: Action,
+        response: Response | None = None,
     ) -> bool:
         """
-        Verify an executed action.
-
-        Temporary implementation.
+        Verify whether an automation action succeeded.
         """
-
-        #
-        # Vision verification will be added
-        # in the next step.
-        #
 
         result = self._vision_service.verify_action(
             action,
+            response,
         )
 
         print(
-            f"[VISION VERIFY] {action.name}({action.target}) -> {result}"
+            f"[VISION VERIFY] "
+            f"{action.name}({action.target}) -> {result}"
         )
 
         return result
